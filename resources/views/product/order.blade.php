@@ -60,32 +60,97 @@
                         <div class="border rounded p-4">
                             <label for="alamat" class="block mb-2">Alamat</label>
                             <textarea id="alamat" name="alamat" class="w-full border rounded-md px-3 py-2" placeholder="Masukkan alamat rumah"></textarea>
+                            <input type="text" id="kodepos" name="kodepos" class="w-full border rounded-md px-3 py-2" placeholder="Masukkan kode pos">
+
                         </div>
 
                         <div class="border rounded p-4 flex space-x-4">
                             <!-- Input state -->
-                            <input type="text" id="provinsi" name="provinsi" class="w-full border rounded-md px-3 py-2" placeholder="Masukkan provinsi">
+                            {{-- <input type="text" id="provinsi" name="provinsi" class="w-full border rounded-md px-3 py-2" placeholder="Masukkan provinsi"> --}}
+                            <label for="origin" >Kota Pengiriman</label>
+                            <select  name="origin" id="origin">
+                                <option>kota Pengiriman</option>
+                                @foreach ($cities as $city )
+                                <option value="{{ $city['city_id'] }}" > {{ $city['city_name'] }}</option>
 
-                            <!-- Input ZIP -->
-                            <input type="text" id="kodepos" name="kodepos" class="w-full border rounded-md px-3 py-2" placeholder="Masukkan kode pos">
+                                @endforeach
+                            </select>
+
+
+                            <label for="destination">Kota Tujuan</label>
+                            <select  name="destination" id="destination">
+                                <option>kota tujuan</option>
+                                @foreach ($cities as $city )
+                                <option value="{{ $city['city_id'] }}" > {{ $city['city_name'] }}</option>
+
+                                @endforeach
+                            </select>
+
+                            <label for="weight"> berat paket </label>
+                            <input type="number" id="weight" name="weight" placeholder="Tolong isi 1000/2000 Gram" class="w-full border rounded-md px-3 py-2" >/ 1000 Gram
                         </div>
 
                         <div class="border rounded p-4">
-                            <label for="pengiriman" class="block mb-2">Pengiriman</label>
-                            <textarea id="pengiriman" name="pengiriman" class="w-full border rounded-md px-3 py-2" placeholder="Masukkan Jasa Pengiriman"></textarea>
+
+                            <label for="courier" class="block mb-2">Pilih Pengiriman</label>
+                            <select  name="courier" id="courier">
+                                <option>Pilih Kurir</option>
+                                <option value="jne">JNE</option>
+                                <option value="pos">POS</option>
+                                <option value="tiki">TIKI</option>
+                            </select>
+                            <label for="notes" class="block mb-2">Notes</label>
+                            <input type="text" id="notes" name="notes" class="w-full border rounded-md px-3 py-2" placeholder="Masukkan alamat email">
                         </div>
 
-                        <!-- (Sisipkan bagian form lainnya di sini) -->
-                        <button type="submit" class="w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Bayar</button>
+                        <div>
+                            <button type="submit" name="cekOngkir" class="w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white" formaction="{{ route('selesaiorder') }} ">Bayar</button>
+
+                            <button type="submit"   class="bg-blue-500 text-white rounded-md px-4 py-2 mt-4" formaction="{{ route('cekOngkir') }}">Cek ongkir</button>
+@csrf
+                        </div>
+
                     </form>
-                    <div class="border-t pt-4">
-                        <p id="totalHarga" class="font-bold">Total: Rp. {{ number_format($totalHarga, 0, ',', '.') }}</p>
+
+                    <div>
+                        @if($ongkir != '')
+                        <h1>Rincian Ongkir</h1>
+                            @foreach ($ongkir as $item )
+                            <div>
+                                <label for="name">{{ $item['name'] }}</label>
+                                @foreach ($item['costs'] as  $cost)
+                                <div>
+                                    <label for="serice">{{ $cost['service'] }}</label>
+                                    @foreach ($cost['cost'] as $harga)
+                                    <div>
+                                        <label for="harga">
+                                            Harga ; {{ $harga['value'] }} (est : {{ $harga['etd'] }} hari)
+                                            @php $totalHarga += $harga['value']; @endphp
+                                        </label>
+                                    </div>
+
+                                    @endforeach
+                                </div>
+
+                                @endforeach
+                            </div>
+
+                            @endforeach
+                        @endif
                     </div>
+                    <div class="border-t pt-4">
+                        <p id="totalHarga" class="font-bold">Total Harga : Rp. {{ number_format($totalHarga, 0, ',', '.') }}</p>
+                    </div>
+
                     <form action="{{ route('cancel') }}" method="post">
                         @csrf
                         <button type="submit" class="bg-red-500 text-white rounded-md px-4 py-2 mt-4">Batalkan Pesanan</button>
                     </form>
 
+                    <form action="{{ route('cekOngkir') }}" method="post">
+                        @csrf
+
+                    </form>
 
                 @else
                     <p>Data keranjang kosong</p>

@@ -66,6 +66,7 @@ Route::middleware('auth','role:user')->group(function(){
     Route::post('/user/dashboard', [UserController::class, 'updateAvatar'])->name('lohe');
 
     Route::get('/user/product/order', [OrderController::class, 'order'])->name('order');
+    Route::post('/user/product/order', [OrderController::class, 'cekOngkir'])->name('cekOngkir');
     Route::post('/user/product/tambah-ke-keranjang/{product}', [OrderController::class, 'tambahKeKeranjang'])->name('tambah.ke.keranjang');
 
 

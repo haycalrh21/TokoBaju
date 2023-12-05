@@ -11,9 +11,11 @@ class Pembeli extends Model
         'namalengkap',
         'email',
         'alamat',
-        'provinsi',
+        'origin',
+        'destination',
         'kodepos',
-        'pengiriman',
+        'courier',
+        'notes',
     ];
 
     public function user()

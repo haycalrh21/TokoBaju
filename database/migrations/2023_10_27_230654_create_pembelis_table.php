@@ -11,9 +11,12 @@ class CreatePembelisTable extends Migration {
             $table->string('namalengkap');
             $table->string('email');
             $table->string('alamat');
-            $table->string('provinsi');
+
             $table->string('kodepos');
-            $table->string('pengiriman');
+            $table->string('origin');
+            $table->string('destination');
+            $table->string('courier');
+            $table->string('notes');
             $table->timestamps();
         });
     }
