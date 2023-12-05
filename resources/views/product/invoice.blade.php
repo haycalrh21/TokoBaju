@@ -61,13 +61,39 @@
                         <p id="payment_status{{ $keranjang->id }}"></p>
                     @endif
                     </div>
+                    <div>
+                        <button type="submit" id="pay-button">cek pembayaran</button>
+                    </div>
                 </div>
             </div>
             @endforeach
         </div>
 
     <!-- Script untuk menghitung waktu tersisa -->
-    <script>
+    
+
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+    <script type="text/javascript">
+        document.getElementById('pay-button').onclick = function(){
+            // SnapToken acquired from the controller
+            snap.pay('{{ $snapToken }}', {
+                onSuccess: function(result){
+                    // You may add your own js here, this is just an example
+                    document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                },
+                onPending: function(result){
+                    // You may add your own js here, this is just an example
+                    document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                },
+                onError: function(result){
+                    // You may add your own js here, this is just an example
+                    document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                }
+            });
+        };
+    
+
+
         // Tanggal dan waktu sekarang
         const now = new Date().getTime();
 

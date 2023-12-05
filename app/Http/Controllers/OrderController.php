@@ -98,7 +98,7 @@ class OrderController extends Controller
     public function bayar(Request $request)
     {
         $user_id = auth()->id();
-
+    
         $pembeli = Pembeli::create([
             'user_id' => $user_id,
             'namalengkap' => $request->input('namalengkap'),
@@ -110,30 +110,26 @@ class OrderController extends Controller
             'courier' => $request->input('courier'),
             'notes' => $request->input('notes'),
         ]);
-
+    
         $pembelian = Pembelian::create([
             'pembeli_id' => $pembeli->id,
         ]);
-
+    
         $keranjangItems = session('keranjang');
-
+    
         foreach ($keranjangItems as $item) {
             $jumlahBarang = $item['jumlahbarang'] ?? 0;
             $idBarang = $item['id'];
-
+    
             $product = Product::find($idBarang);
-
+    
             if ($product) {
-                $selectedSizes = $item['ukuran'] ?? []; // Fetch the selected sizes for this product
-
-                // Save only the selected sizes for the product as a string
+                $selectedSizes = $item['ukuran'] ?? [];
                 $ukuranAsString = implode(', ', $selectedSizes);
-
-                // Continue with other required data to be saved in the purchase record
+    
                 $harga = $product->harga;
                 $totalHarga = $jumlahBarang * $harga;
-
-                // Create purchase record including selected sizes for the product
+    
                 Keranjang::create([
                     'product_id' => $idBarang,
                     'pembelian_id' => $pembelian->id,
@@ -144,10 +140,8 @@ class OrderController extends Controller
                     'brand' => $item['brand'],
                     'ukuran' => $ukuranAsString,
                     'user_id' => $user_id,
-                    // Add other required columns
                 ]);
-
-                // Adjust product stock
+    
                 if ($product->stok >= $jumlahBarang) {
                     $product->stok -= $jumlahBarang;
                     $product->save();
@@ -157,38 +151,72 @@ class OrderController extends Controller
                 }
             }
         }
-
-        session()->forget('keranjang'); // Clear the cart after the purchase
-
-        return redirect()->route('selesai')->with('success', 'Pembelian sukses! Terima kasih.');
+    
+        // Set your Merchant Server Key
+        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+        \Midtrans\Config::$isProduction = false;
+        // Set sanitization on (default)
+        \Midtrans\Config::$isSanitized = true;
+        // Set 3DS transaction for credit card to true
+        \Midtrans\Config::$is3ds = true;
+    
+        $params = [
+            'transaction_details' => [
+                'order_id' => rand(),
+                'gross_amount' => $totalHarga, // Adjust as needed
+            ],
+        ];
+    
+        // Mendapatkan Snap Token dari Midtrans
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+    
+        // Simpan Snap Token dalam sesi
+        session()->put('snapToken', $snapToken);
+    
+        // Hapus keranjang setelah pembelian
+        session()->forget('keranjang');
+    
+        // Redirect ke halaman 'selesai' dengan Snap Token dan pesan sukses
+        return redirect()->route('selesai', ['snapToken' => $snapToken])->with('success', 'Pembelian sukses! Terima kasih.');
     }
+    
 
 
     public function showInvoice()
-    {
-        // Dapatkan pengguna yang sedang login
-        $user = auth()->user();
+{
+    // Dapatkan pengguna yang sedang login
+    $user = auth()->user();
 
-        // Periksa apakah pengguna ada
-        if ($user) {
-            // Dapatkan item keranjang terbaru dari pengguna
-            $latestCartItems = Keranjang::where('user_id', $user->id)
-                ->orderBy('created_at', 'desc')
-                ->get();
+    // Periksa apakah pengguna ada
+    if ($user) {
+        // Dapatkan item keranjang terbaru dari pengguna
+        $latestCartItems = Keranjang::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-            // Periksa apakah item keranjang ditemukan
-            if ($latestCartItems->isNotEmpty()) {
-                // Jika item keranjang ditemukan, tampilkan halaman invoice
-                return view('product.invoice', ['keranjangItems' => $latestCartItems]);
+        // Periksa apakah item keranjang ditemukan
+        if ($latestCartItems->isNotEmpty()) {
+            // Ambil Snap Token dari sesi
+            $snapToken = session('snapToken');
+
+            // Jika Snap Token ditemukan, kirimkan ke view
+            if ($snapToken) {
+                return view('product.invoice', ['keranjangItems' => $latestCartItems, 'snapToken' => $snapToken]);
             } else {
-                // Jika item keranjang tidak ditemukan, tampilkan pesan
-                return view('product.invoice')->with('message', 'Tidak ada item keranjang terbaru.');
+                // Jika Snap Token tidak ditemukan, tampilkan pesan
+                return view('product.invoice')->with('message', 'Snap Token tidak ditemukan.');
             }
+        } else {
+            // Jika item keranjang tidak ditemukan, tampilkan pesan
+            return view('product.invoice')->with('message', 'Tidak ada item keranjang terbaru.');
         }
-
-        // Jika pengguna tidak ditemukan, tampilkan pesan
-        return view('product.invoice')->with('message', 'Pengguna tidak ditemukan.');
     }
+
+    // Jika pengguna tidak ditemukan, tampilkan pesan
+    return view('product.invoice')->with('message', 'Pengguna tidak ditemukan.');
+}
+
 
 
 

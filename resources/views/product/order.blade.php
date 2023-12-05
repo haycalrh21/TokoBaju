@@ -106,7 +106,7 @@
                         <div>
                             <button type="submit" name="cekOngkir" class="w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white" formaction="{{ route('selesaiorder') }} ">Bayar</button>
 
-                            <button type="submit"   class="bg-blue-500 text-white rounded-md px-4 py-2 mt-4" formaction="{{ route('cekOngkir') }}">Cek ongkir</button>
+                            <button type="submit" id="pay-button"   class="bg-blue-500 text-white rounded-md px-4 py-2 mt-4" ">Cek ongkir</button>
 @csrf
                         </div>
 
@@ -167,27 +167,36 @@
 
     </body>
     {{-- @include('template.footer') --}}
-    <script>
-    function updateTotalHarga(element, harga) {
-    let jumlahBarang = parseInt(element.value);
-    let totalHarga = isNaN(harga) ? 0 : harga * jumlahBarang;
-    document.getElementById('totalHarga').innerText = `Total: Rp. ${totalHarga.toLocaleString()}`;
-}
-function checkStockAndSubmit(event) {
 
 
-    function checkStockAndSubmit(event) {
-    const selectedQuantity = parseInt(document.getElementById('jumlahbarang').value); // Ambil nilai jumlah barang yang dipilih
-    const stok = parseInt({{ $product->stok ?? 0 }}); // Ambil nilai stok dari variabel PHP dan pastikan dikonversi ke integer
 
-    if (selectedQuantity > stok) {
-        event.preventDefault(); // Batalkan pengiriman form jika jumlah yang dipilih melebihi stok
-        alert('Maaf, pesanan melebihi stok yang tersedia.');
-    }
-}
-function updateSelectedQuantity(element) {
-    document.getElementById('selectedQuantity').value = element.value; // Perbarui nilai pada field hidden sesuai jumlah barang yang dipilih
-}
-    </script>
+        <!-- Your existing HTML content -->
+    
+        <script>
+        
+    
+            function updateTotalHarga(element, harga) {
+                let jumlahBarang = parseInt(element.value);
+                let totalHarga = isNaN(harga) ? 0 : harga * jumlahBarang;
+                document.getElementById('totalHarga').innerText = `Total: Rp. ${totalHarga.toLocaleString()}`;
+            }
+    
+            function checkStockAndSubmit(event) {
+                const selectedQuantity = parseInt(document.getElementById('jumlahbarang').value);
+                const stok = parseInt({{ $product->stok ?? 0 }});
+    
+                if (selectedQuantity > stok) {
+                    event.preventDefault();
+                    alert('Maaf, pesanan melebihi stok yang tersedia.');
+                }
+            }
+    
+            function updateSelectedQuantity(element) {
+                document.getElementById('selectedQuantity').value = element.value;
+            }
+        </script>
+
+    
+    
 
     </html>
