@@ -273,30 +273,26 @@ class OrderController extends Controller
             // Tangani jika pengguna tidak ditemukan
         }
     }
-    public function cekOngkir(Request $request){
-
-
+    public function cekOngkir(Request $request) {
         $response = Http::withHeaders([
             'key' => '2efe421c944cd428ec4602fb44042c45'
         ])->get('https://api.rajaongkir.com/starter/city');
-
+    
         $responseCost = Http::withHeaders([
             'key' => '2efe421c944cd428ec4602fb44042c45'
-        ])->post('https://api.rajaongkir.com/starter/cost',[
+        ])->post('https://api.rajaongkir.com/starter/cost', [
             'origin' => $request->origin,
-            'destination'=> $request->destination,
-            'weight'=> $request->weight,
-            'courier'=> $request->courier
+            'destination' => $request->destination,
+            'weight' => $request->weight,
+            'courier' => $request->courier
         ]);
-
-
-        $cities = $response['rajaongkir']['results'];
-        $ongkir = $responseCost['rajaongkir']['results'];
-
-
-        // dd($responseCost->json());
+    
+        $cities = $response['rajaongkir']['results'] ;
+        $ongkir = $responseCost['rajaongkir'] ;
+    
         $products = Product::all();
-        return view('product/order', ['products' => $products, 'cities' => $cities, 'ongkir'=> $ongkir]);
+    
+        return view('product/order', ['products' => $products, 'cities' => $cities, 'ongkir' => $ongkir]);
     }
 
 }

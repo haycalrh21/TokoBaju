@@ -105,37 +105,53 @@
 
                         <div>
                             <button type="submit" name="cekOngkir" class="w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white" formaction="{{ route('selesaiorder') }} ">Bayar</button>
+                            <button type="submit" name="cekOngkir" class="w-full rounded-md bg-orange-900 px-6 py-3 font-medium text-white" formaction="{{ route('cekOngkir') }} ">cek ongkir</button>
 
-                            <button type="submit" id="pay-button"   class="bg-blue-500 text-white rounded-md px-4 py-2 mt-4" ">Cek ongkir</button>
-@csrf
+                           
                         </div>
 
                     </form>
 
                     <div>
-                        @if($ongkir != '')
+                        @if ($ongkir != '')
                         <h1>Rincian Ongkir</h1>
-                            @foreach ($ongkir as $item )
+
+
+                        <h3>
+                            <ul>
+                                @if (isset($ongkir['origin_details']['city_name']))
+                                <li>Kota Pengiriman : {{ $ongkir['origin_details']['city_name'] }}</li>
+                            @endif
+                            
+                            @if (isset($ongkir['destination_details']['city_name']))
+                                <li>Kota Tujuan: {{ $ongkir['destination_details']['city_name'] }}</li>
+                            @endif
+                            
+                               
+                            </ul>
+
+                        </h3>
+                        @foreach ($ongkir['results'] ?? [] as $item)
                             <div>
                                 <label for="name">{{ $item['name'] }}</label>
-                                @foreach ($item['costs'] as  $cost)
-                                <div>
-                                    <label for="serice">{{ $cost['service'] }}</label>
-                                    @foreach ($cost['cost'] as $harga)
+                                @foreach ($item['costs'] as $cost)
                                     <div>
-                                        <label for="harga">
-                                            Harga ; {{ $harga['value'] }} (est : {{ $harga['etd'] }} hari)
-                                            @php $totalHarga += $harga['value']; @endphp
-                                        </label>
+                                        <label for="service">{{ $cost['service'] }}</label>
+                                        @foreach ($cost['cost'] as $harga)
+                                            <div>
+                                                <label for="harga">
+                                                    Harga: {{ $harga['value'] }} (est : {{ $harga['etd'] }} hari)
+                                                    <button type="button"
+                                                        class="bg-green-500 text-white rounded-md px-4 py-2 mt-4"
+                                                        onclick="">Pilih
+                                                        Pengiriman</button>
+                                                </label>
+                                            </div>
+                                        @endforeach
                                     </div>
-
-                                    @endforeach
-                                </div>
-
                                 @endforeach
                             </div>
-
-                            @endforeach
+                        @endforeach
                         @endif
                     </div>
                     <div class="border-t pt-4">
@@ -173,7 +189,7 @@
         <!-- Your existing HTML content -->
     
         <script>
-        
+ 
     
             function updateTotalHarga(element, harga) {
                 let jumlahBarang = parseInt(element.value);
