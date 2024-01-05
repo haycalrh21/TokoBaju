@@ -12,11 +12,7 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $products = Product::all();
-        return view('product/product',compact('products'));
-    }
+
     public function order()
     {
         return view('product/order');

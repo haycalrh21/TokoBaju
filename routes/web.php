@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -21,13 +22,12 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 
 
-Route::get('/',[ProductController::class, 'tampilindex'])->name('tampilindex');
+
+Route::get('/',[HomeController::class, 'index'])->name('index');
+Route::get('/product',[HomeController::class, 'tampilbaju'])->name('indexproduct');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
@@ -58,22 +58,24 @@ Route::middleware('auth','role:admin')->group(function(){
 
 
 Route::middleware('auth','role:user')->group(function(){
-    Route::get('/user/index',[UserController::class, 'index'])->name('indexuser');
-   Route::get('/user/product',[ProductController::class, 'index'])->name('indexproduct');
-    Route::get('/user/order',[ProductController::class, 'order'])->name('indexorder');
-    Route::get('/user/checkout',[ProductController::class, 'checkout'])->name('checkout');
-    Route::get('/user/dashboard',[UserController::class, 'tampildata'])->name('dashboard');
-    Route::post('/user/dashboard', [UserController::class, 'updateAvatar'])->name('lohe');
 
-    Route::get('/user/product/order', [OrderController::class, 'order'])->name('order');
-    Route::post('/user/product/order', [OrderController::class, 'cekOngkir'])->name('cekOngkir');
-    Route::post('/user/product/tambah-ke-keranjang/{product}', [OrderController::class, 'tambahKeKeranjang'])->name('tambah.ke.keranjang');
+    Route::get('/order',[ProductController::class, 'order'])->name('indexorder');
+    Route::get('/checkout',[ProductController::class, 'checkout'])->name('checkout');
+    Route::get('/dashboard',[UserController::class, 'tampildata'])->name('dashboard');
+    Route::post('/dashboard', [UserController::class, 'updateAvatar'])->name('lohe');
+
+    Route::get('/product/order', [OrderController::class, 'order'])->name('order');
+    Route::post('/cekongkir', [CartController::class, 'cekongkir'])->name('cekOngkir');
+    Route::post('/product/tambah-ke-keranjang/{product}', [OrderController::class, 'tambahKeKeranjang'])->name('tambah.ke.keranjang');
 
 
 
     Route::get('/user/riwayat/', [OrderController::class, 'orderan'])->name('orderan');
 
+        Route::get('/carts', [CartController::class, 'index'])->name('carts.index');
+           Route::post('/carts/add/{productId}', [CartController::class, 'addToCart'])->name('carts.addToCart');
 
+        Route::delete('/carts/remove/{cartItemId}', [CartController::class, 'removeFromCart'])->name('carts.removeFromCart');
 
 // routes/web.php
 Route::post('/user/product/cancel', [OrderController::class, 'cancel'])->name('cancel');

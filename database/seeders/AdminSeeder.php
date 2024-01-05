@@ -26,6 +26,15 @@ class AdminSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+            DB::table('users')->insert([
+                'name' => $faker->name,
+                'email' => 'hrayhansyah@gmail.com',
+                'password' => Hash::make('password'), // Atur password sesuai kebutuhan
+                'role' => 'user',
+                'status' => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
     }
 }

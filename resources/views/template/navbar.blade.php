@@ -75,14 +75,14 @@
             @else
 
             @endif
-            <a class="btn btn-ghost normal-case text-xl" href="{{ route('indexuser') }}">Home</a>
+            <a class="btn btn-ghost normal-case text-xl" href="{{ route('index') }}">Home</a>
 
             <a class="btn btn-ghost normal-case text-xl" href="{{ route('indexproduct') }}">Product</a>
-            <a class="btn btn-ghost normal-case text-xl" href="{{ route('indexorder') }}">Order</a>
+            <a class="btn btn-ghost normal-case text-xl" href="{{ route('carts.index') }}">Keranjang</a>
             <a class="btn btn-ghost normal-case text-xl" href="{{ route('selesai') }}">riwayat</a>
         </div>
         <div class="flex-1 flex items-center justify-center">
-            <a href="{{ route('indexuser') }}" class="logo-link">
+            <a href="{{ route('index') }}" class="logo-link">
                 <img src="{{ asset('/logo.jpg') }}" alt="Logo" class="logo-img"/>
             </a>
         </div>
@@ -184,76 +184,6 @@
 
 
 
-    <script>
-    // Fungsi untuk menetapkan jumlah barang pada badge
-    function updateCartCount(count) {
-            const badge = document.querySelector('.indicator-item');
-            badge.textContent = count; // Menetapkan teks di dalam badge sesuai dengan jumlah yang diterima
-        }
 
-        function toggleDropdown() {
-            // ... kode lain untuk menampilkan dan menyembunyikan dropdown ...
-
-            // Ambil jumlah barang dalam keranjang (ganti '10' dengan jumlah aktual dari data keranjang)
-            const jumlahBarang = 10; // Misalnya jumlah dari keranjang Anda
-            updateCartCount(jumlahBarang);
-        }
-    function toggleDropdown() {
-            const dropdownContent = document.getElementById('dropdownContent');
-            if (dropdownContent.style.display === 'none') {
-                dropdownContent.style.display = 'block';
-            } else {
-                dropdownContent.style.display = 'none';
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            // Temukan tombol "Cart" di navbar
-            const cartIcon = document.querySelector(".cart-icon");
-
-            // Temukan elemen notifikasi
-            const notification = document.querySelector(".notification");
-
-            // Tambahkan event listener untuk menampilkan notifikasi saat ikon keranjang di klik
-            cartIcon.addEventListener("click", function () {
-                // Dapatkan data produk dalam keranjang dari server melalui AJAX/Fetch
-                // Gantilah dengan permintaan sesuai dengan server Anda
-                fetch('/api/get-cart-data', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        // Tampilkan data produk dalam notifikasi
-                        showCartNotification(data);
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                    });
-            });
-
-            // Fungsi untuk menampilkan notifikasi dengan data produk dalam keranjang
-            function showCartNotification(cartData) {
-                if (notification && cartData) {
-                    // Konstruksi notifikasi dengan data produk dalam keranjang
-                    let notificationContent = '<ul>';
-                    cartData.products.forEach((product) => {
-                        notificationContent += `<li>${product.name}: ${product.quantity} item</li>`;
-                    });
-                    notificationContent += '</ul>';
-
-                    // Tampilkan notifikasi
-                    notification.innerHTML = notificationContent;
-
-                    // Tampilkan notifikasi dalam beberapa detik (opsional)
-                    setTimeout(() => {
-                        notification.innerHTML = ''; // Hapus notifikasi setelah beberapa detik
-                    }, 5000); // Ubah 5000 menjadi jumlah milidetik yang Anda inginkan
-                }
-            }
-        });
-    </script>
 
     </body>
