@@ -6,7 +6,10 @@ use App\Models\Cart;
 use App\Models\Product;
 
 use App\Models\CartItems;
+use App\Models\Pengiriman;
+use App\Models\Checkout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
@@ -24,36 +27,88 @@ class CartController extends Controller
         // Mendapatkan semua item dalam keranjang
         $cartItems = $cart ? $cart->cartItems : collect(); // Use a ternary operator to handle a null cart
 
-        $response = Http::withHeaders([
-            'key' => '2efe421c944cd428ec4602fb44042c45'
-        ])->get('https://api.rajaongkir.com/starter/city');
 
-        $responseCost = Http::withHeaders([
-            'key' => '2efe421c944cd428ec4602fb44042c45'
-        ])->post('https://api.rajaongkir.com/starter/cost', [
-            'origin' => $request->origin,
-            'destination' => $request->destination,
-            'weight' => $request->weight,
-            'courier' => $request->courier
-        ]);
 
-        $cities = $response['rajaongkir']['results'] ;
-        $ongkir = $responseCost['rajaongkir'] ;
-
-        return view('carts.index', compact('cartItems','cities','ongkir'));
+        return view('carts.index', compact('cartItems'));
     }
+
+
+    public function simpan(Request $request)
+    {
+        try {
+            // Validasi data yang diterima dari formulir
+            $request->validate([
+                'harga' => 'required|numeric',
+                'kota_asal' => 'required|string',
+                'kota_tujuan' => 'required|string',
+                'service' => 'required|string',
+                'estimasi_hari' => 'required|string',
+            ]);
+    
+            $userId = auth()->id();
+    
+            // Ambil cart_id terakhir yang dimiliki oleh user dengan user_id terakhir
+            $cartId = Checkout::where('user_id', $userId)->latest('id')->value('cart_id');
+    
+            $pengiriman = new Pengiriman([
+                'cart_id' => $cartId,
+                'user_id' => $userId,
+                'harga' => $request->input('harga'),
+                'kota_asal' => $request->input('kota_asal'),
+                'kota_tujuan' => $request->input('kota_tujuan'),
+                'service' => $request->input('service'),
+                'estimasi_hari' => $request->input('estimasi_hari'),
+            ]);
+    
+            $pengiriman->save();
+    
+            // Tambahkan logika penjumlahan harga di sini
+            $checkOuts = Checkout::where('user_id', $userId)->where('cart_id', $cartId)->get();
+            
+            foreach ($checkOuts as $checkOut) {
+                $checkOut->totalPrice += $pengiriman->harga;
+    
+                \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+                \Midtrans\Config::$isProduction = false;
+                \Midtrans\Config::$isSanitized = true;
+                \Midtrans\Config::$is3ds = true;
+    
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $cartId, // Menggunakan cart_id sebagai order_id
+                        'gross_amount' => $checkOut->totalPrice, // Sesuaikan sesuai kebutuhan
+                    ],
+                ];
+    
+                // Mendapatkan Snap Token dari Midtrans
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+    
+                // Simpan snap_token ke dalam kolom snap_token
+                $checkOut->snap_token = $snapToken;
+    
+                $checkOut->save();
+            }
+            session()->put('_token', csrf_token());
+
+            return redirect()->route('invoice');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+    
+    
+
+
+
 
 
 public function cekongkir(Request $request){
 
  // Mengambil user yang sedang login
- $user = Auth::user();
+
 
  // Mendapatkan keranjang pengguna (jika ada)
- $cart = $user->cart;
 
- // Mendapatkan semua item dalam keranjang
- $cartItems = $cart ? $cart->cartItems : collect(); // Use a ternary operator to handle a null cart
 
     $response = Http::withHeaders([
         'key' => '2efe421c944cd428ec4602fb44042c45'
@@ -68,14 +123,21 @@ public function cekongkir(Request $request){
         'courier' => $request->courier
     ]);
 
-    $cities = $response['rajaongkir']['results'] ;
-    $ongkir = $responseCost['rajaongkir'] ;
+    // Tambahkan log atau pesan debugging
+    // Log::info('Response Cost:', $responseCost);
 
+    $cities = $response['rajaongkir']['results'];
+    $ongkir = $responseCost['rajaongkir'];
 
-
-    return view('carts.index',compact('cartItems','cities','ongkir'));
+    return view('ongkir.index', compact('cities', 'ongkir'));
 }
 
+
+
+public function coba(){
+    return view('product.coba');
+
+}
 
 
 public function addToCart(Request $request, $productId)
@@ -116,7 +178,8 @@ public function addToCart(Request $request, $productId)
         $cart->cartItems()->save($cartItem);
     }
 
-    return redirect()->route('carts.index')->with('success', 'Produk berhasil ditambahkan ke dalam keranjang.');
+
+    return redirect()->route('carts.index',)->with('success', 'Produk berhasil ditambahkan ke dalam keranjang.');
 }
 
 

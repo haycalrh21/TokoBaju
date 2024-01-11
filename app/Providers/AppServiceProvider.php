@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,10 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-       // Bagian ini memanggil fungsi share() untuk membagikan data 'keranjang'
-        // kepada view 'navbar.blade.php'
-        View::composer('template.navbar', function ($view) {
-            $view->with('keranjang', session('keranjang'));
-        });
+       if(config('app.env')==='local'){
+            URL::forceScheme('https');
+           }
     }
 }

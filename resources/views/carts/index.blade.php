@@ -11,7 +11,7 @@
 <body>
     @include('template.navbar')
 
-<div class="container">
+
     <h2>Shopping Cart</h2>
 
     @if(session('success'))
@@ -23,35 +23,46 @@
     @if($cartItems->isEmpty())
         <p>Keranjang Anda kosong.</p>
     @else
-        <!-- Tampilkan isi keranjang -->
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Produk</th>
-                    <th>Ukuran</th>
-                    <th>Jumlah</th>
-                    <th>harga</th>
-                    <th>Hapus</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($cartItems as $cartItem)
+        <div class="container">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>{{ $cartItem->product->namabarang }}</td>
-                        <td>{{ $cartItem->size }}</td>
-                        <td>{{ $cartItem->quantity }}</td>
-                        <td>{{ $cartItem->harga }}</td>
-                        <td>
-                            <form action="{{ route('carts.removeFromCart', $cartItem->id) }}" method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Hapus</button>
-                            </form>
-                        </td>
+                        <th>Produk</th>
+                        <th>Ukuran</th>
+                        <th>Jumlah</th>
+                        <th>harga</th>
+
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach($cartItems as $cartItem)
+                        <tr>
+                            <td>{{ $cartItem->product->namabarang }}</td>
+                            <td>{{ $cartItem->size }}</td>
+                            <td>{{ $cartItem->quantity }}</td>
+                            <td>{{ $cartItem->harga }}</td>
+
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <form action="{{ route('carts.removeFromCart', $cartItem->id) }}" method="post">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">Hapus</button>
+        </form>
+        @php
+        $totalPrice = 0;
+    @endphp
+      @foreach($cartItems as $cartItem)
+      @php
+          $subtotal = $cartItem->quantity * $cartItem->harga;
+          $totalPrice += $subtotal;
+      @endphp
+  @endforeach
+  <p id="totalPrice">Total Harga: {{ $totalPrice }}</p>
+
         <p>Total: {{ $cartItems->sum('quantity') }} barang</p>
     @endif
 <!-- Open the modal using ID.showModal() method -->
@@ -61,96 +72,56 @@
     <h3 class="font-bold text-lg">Hello!</h3>
     <p class="py-4">Press ESC key or click the button below to close</p>
     <div class="modal-action">
-      <form method="post" action="{{ route('cekOngkir') }}">
-@csrf
-        <div class="">
-            <!-- Input state -->
-            {{-- <input type="text" id="provinsi" name="provinsi" class="w-full border rounded-md px-3 py-2" placeholder="Masukkan provinsi"> --}}
-            <label for="origin" >Kota Pengiriman</label>
-            <select  name="origin" id="origin">
-                <option>kota Pengiriman</option>
-                @foreach ($cities as $city )
-                <option value="{{ $city['city_id'] }}" > {{ $city['city_name'] }}</option>
 
-                @endforeach
-            </select>
-
-
-            <label for="destination">Kota Tujuan</label>
-            <select  name="destination" id="destination">
-                <option>kota tujuan</option>
-                @foreach ($cities as $city )
-                <option value="{{ $city['city_id'] }}" > {{ $city['city_name'] }}</option>
-
-                @endforeach
-            </select>
-
-            <label for="weight"> berat paket </label>
-            <input type="number" id="weight" name="weight" placeholder="Tolong isi 1000/2000 Gram" class="w-full border rounded-md px-3 py-2" >/ 1000 Gram
-        </div>
-
-        <div class="">
-
-            <label for="courier" class="block mb-2">Pilih Pengiriman</label>
-            <select  name="courier" id="courier">
-                <option>Pilih Kurir</option>
-                <option value="jne">JNE</option>
-                <option value="pos">POS</option>
-                <option value="tiki">TIKI</option>
-            </select>
-
-        </div>
-
-<button type="submit" name="cekOngkir" class="w-full rounded-md bg-orange-900 px-6 py-3 font-medium text-white" ">cek ongkir</button>
-@csrf
-      </form>
     </div>
   </div>
 </dialog>
-<div>
-    @if ($ongkir != '')
-    <h1>Rincian Ongkir</h1>
 
 
-    <h3>
-        <ul>
-            @if (isset($ongkir['origin_details']['city_name']))
-            <li>Kota Pengiriman : {{ $ongkir['origin_details']['city_name'] }}</li>
-        @endif
-
-        @if (isset($ongkir['destination_details']['city_name']))
-            <li>Kota Tujuan: {{ $ongkir['destination_details']['city_name'] }}</li>
-        @endif
-
-
-        </ul>
-
-    </h3>
-    @foreach ($ongkir['results'] ?? [] as $item)
-        <div>
-            <label for="name">{{ $item['name'] }}</label>
-            @foreach ($item['costs'] as $cost)
-                <div>
-                    <label for="service">{{ $cost['service'] }}</label>
-                    @foreach ($cost['cost'] as $harga)
-                        <div>
-                            <label for="harga">
-                                Harga: {{ $harga['value'] }} (est : {{ $harga['etd'] }} hari)
-                                <button type="button"
-                                    class="bg-green-500 text-white rounded-md px-4 py-2 mt-4"
-                                    onclick="">Pilih
-                                    Pengiriman</button>
-                            </label>
-                        </div>
-                    @endforeach
-                </div>
-            @endforeach
-        </div>
-    @endforeach
+<form method="post" action="{{ route('cekongkos') }}">
+    @csrf
+    @if($cartItems->isNotEmpty())
+        <input type="hidden" id="totalPriceInput" name="totalPrice" value="{{ $totalPrice }}">
+        @foreach($cartItems as $index => $cartItem)
+            <input type="hidden" name="cartItems[{{ $index }}][product_id]" value="{{ $cartItem->product->id }}">
+            <input type="hidden" name="cartItems[{{ $index }}][size]" value="{{ $cartItem->size }}">
+            <input type="hidden" name="cartItems[{{ $index }}][quantity]" value="{{ $cartItem->quantity }}">
+            <input type="hidden" name="cartItems[{{ $index }}][harga]" value="{{ $cartItem->harga }}">
+            <!-- Include other hidden inputs for other attributes of cart items -->
+        @endforeach
+    @else
+        <p>Your cart is empty.</p>
     @endif
-</div>
+    <button type="submit" class="btn btn-primary">Submit Checkout</button>
 
-</div>
+</form>
+
+
+
+
+{{-- <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script> --}}
+
+<script type="text/javascript">
+
+
+    function updateTotalPrice(newHarga) {
+        // Get the current total price from the DOM
+        var currentTotal = document.getElementById('totalPrice').innerHTML;
+
+        // Extract the numerical value from the current total price
+        var currentTotalValue = parseFloat(currentTotal.split(':')[1].trim());
+
+        // Calculate the new total price by adding the newHarga to the current total
+        var newTotalPrice = currentTotalValue + newHarga;
+
+        // Update the total price in the DOM
+        document.getElementById('totalPrice').innerHTML = 'Total Harga: ' + newTotalPrice;
+
+        // Hide the "Rincian Ongkir" section
+        // document.getElementById('rincianOngkirSection').style.display = 'none';
+    }
+</script>
+
 
 
 </body>

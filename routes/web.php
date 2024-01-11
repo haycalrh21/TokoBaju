@@ -6,10 +6,14 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CheckOutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\InvoiceController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -60,14 +64,19 @@ Route::middleware('auth','role:admin')->group(function(){
 Route::middleware('auth','role:user')->group(function(){
 
     Route::get('/order',[ProductController::class, 'order'])->name('indexorder');
-    Route::get('/checkout',[ProductController::class, 'checkout'])->name('checkout');
+
     Route::get('/dashboard',[UserController::class, 'tampildata'])->name('dashboard');
     Route::post('/dashboard', [UserController::class, 'updateAvatar'])->name('lohe');
 
     Route::get('/product/order', [OrderController::class, 'order'])->name('order');
-    Route::post('/cekongkir', [CartController::class, 'cekongkir'])->name('cekOngkir');
+    // Route::post('/cekongkir', [CartController::class, 'cekongkir'])->name('cekongkir');
+
+    // Route::match(['get', 'post'], '/simpan', [CartController::class, 'simpan'])->name('simpan');
+
+    Route::post('/simpan',[CartController::class, 'simpan'])->name('simpandata');
     Route::post('/product/tambah-ke-keranjang/{product}', [OrderController::class, 'tambahKeKeranjang'])->name('tambah.ke.keranjang');
 
+    Route::get('/coba', [CartController::class, 'coba'])->name('coba');
 
 
     Route::get('/user/riwayat/', [OrderController::class, 'orderan'])->name('orderan');
@@ -76,6 +85,21 @@ Route::middleware('auth','role:user')->group(function(){
            Route::post('/carts/add/{productId}', [CartController::class, 'addToCart'])->name('carts.addToCart');
 
         Route::delete('/carts/remove/{cartItemId}', [CartController::class, 'removeFromCart'])->name('carts.removeFromCart');
+
+        Route::post('/checkout', [CheckOutController::class, 'processCheckout'])->name('checkout');
+
+
+
+        Route::post('/kirimdata', [CheckOutController::class, 'masukcekongkos'])->name('cekongkos');
+        Route::get('/cekongkos', [CheckOutController::class, 'cekongkoskirim'])->name('cekongkoskirim');
+        Route::post('/cekongkos', [CheckOutController::class, 'cekongkoskirim1'])->name('cekongkoskirim1');
+        Route::post('/updatestatus', [CheckOutController::class, 'gantistatus'])->name('gantistatus');
+
+
+
+        // Route::post('/snaptoken', [CheckOutController::class, 'snaptoken'])->name('snaptoken');
+        Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('invoice');
+        Route::post('/midtrans-callback', [InvoiceController::class, 'callback'])->name('callback');
 
 // routes/web.php
 Route::post('/user/product/cancel', [OrderController::class, 'cancel'])->name('cancel');
