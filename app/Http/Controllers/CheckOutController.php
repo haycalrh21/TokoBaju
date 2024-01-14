@@ -150,7 +150,7 @@ public function processCheckout(Request $request)
                 'id' => $result['product_id'],
                 'price' => $itemPrice, // Replace with the actual price of the item
                 'quantity' => $result['quantity'],
-               
+
             ],
             // Add more items if needed
         ],

@@ -75,6 +75,6 @@
 
 
 </body>
-{{-- @include('template.footer') --}}
+@include('template.footer')
 
 </html>

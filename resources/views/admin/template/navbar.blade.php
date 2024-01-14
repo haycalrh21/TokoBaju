@@ -15,9 +15,26 @@
     </form>
 
     <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown no-arrow d-sm-none">
-            <!-- ... (kode dropdown untuk tampilan mobile) ... -->
+        <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="paymentDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-money-bill-alt"></i>
+                @if($usersWithPayments->count() > 0)
+                    <span class="badge badge-danger badge-counter">{{ $usersWithPayments->count() }}</span>
+                @endif
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="paymentDropdown">
+                @foreach($usersWithPayments as $user)
+                    @foreach($user->checkOuts as $checkOut)
+                        <a class="dropdown-item" href="#">
+                            <i class="fas fa-check-circle fa-sm fa-fw mr-2 text-gray-400"></i>
+                            {{ $user->name }} telah membayar sebesar {{ $checkOut->totalPrice }}
+                        </a>
+                    @endforeach
+                @endforeach
+            </div>
         </li>
+
+
 
         <li class="nav-item dropdown no-arrow mx-1">
             <!-- ... (kode dropdown untuk Alerts) ... -->
@@ -38,6 +55,8 @@
                 </span>
                 <img class="img-profile rounded-circle" src="https://startbootstrap.github.io/startbootstrap-sb-admin-2/img/undraw_profile.svg">
             </a>
+
+
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="/profile">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -51,14 +70,15 @@
                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                     Activity Log
                 </a>
-                <div class="dropdown-item"></div>
-                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+
+                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="dropdown-item" >
+                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                     Logout
+                    <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">
+                        @csrf
+                    </form>
                 </a>
-                <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">
-                    @csrf
-                </form>
+
             </div>
         </li>
     </ul>

@@ -43,7 +43,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pembelian::class, 'user_id');
     }
-
+    public function checkOuts()
+    {
+        return $this->hasMany(CheckOut::class);
+    }
 
     public function cart()
 {

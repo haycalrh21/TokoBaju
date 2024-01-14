@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pengirimans', function (Blueprint $table) {
+        Schema::create('pengirimen', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('check_out_id');
+
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('cart_id');
             $table->string('kota_asal');
             $table->string('kota_tujuan');
             $table->decimal('harga', 10, 2);
             $table->string('service');
-            $table->integer('estimasi_hari');
+            $table->string('estimasi_hari');
             // tambahkan kolom lain sesuai kebutuhan
 
             $table->timestamps();

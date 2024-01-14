@@ -18,9 +18,11 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('product_id');
             $table->string('size');
+            $table->string('snap_token')->nullable();
             $table->integer('quantity');
             $table->decimal('harga', 10, 2);
             $table->decimal('totalPrice', 10, 2);
+            $table->enum('status', ['belum bayar', 'sudah bayar'])->nullable()->default('belum bayar');
 
             $table->timestamps();
         });

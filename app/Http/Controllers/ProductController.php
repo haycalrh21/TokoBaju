@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\Product;
 use App\Models\productSize;
+use Illuminate\Http\Request;
 
 
 class ProductController extends Controller
@@ -39,10 +40,13 @@ class ProductController extends Controller
     }
 
     public function productadmin(){
+        $usersWithPayments = User::whereHas('checkOuts', function ($query) {
+            $query->where('status', 'sudah bayar');
+        })->with('checkOuts')->get();
         $product = Product::all();
 
         // Tampilkan tampilan 'product.index' dengan data produk
-        return view('admin/product/index', compact('product'));
+        return view('admin/product/index', compact('product','usersWithPayments'));
 
     }
 
