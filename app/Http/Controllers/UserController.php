@@ -23,6 +23,7 @@ class UserController extends Controller
 
     public function tampildata()
     {
+        $user = Auth::user();
         $users = User::all();
         return view('dashboard', ['users' => $users]);
     }
@@ -34,17 +35,14 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
         $user = $request->user();
 
         // Update user details
-        $user->fill($request->validated());
+        $user->fill($request->except('avatar'));
 
-        // Reset 'email_verified_at' if the email is changed
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
+
 
         // Process avatar update
         if ($request->hasFile('avatar')) {
@@ -58,32 +56,91 @@ class UserController extends Controller
             $user->avatar = $path; // Simpan path avatar ke dalam basis data
         }
 
+        // Validate and save changes to name and email
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $user->name = $request->input('name'); // Menetapkan perubahan nama
+
+        info('Update User Data:', ['name' => $user->name, 'email' => $user->email]); // Log data
+
         $user->save();
 
         return redirect()->route('lohe')->with('alertMessage', 'Profil Anda telah diperbarui');
     }
 
 
-    public function updateAvatar(Request $request): RedirectResponse
-{
-    $user = $request->user();
 
-    // Process avatar update
-    if ($request->hasFile('avatar')) {
+
+
+
+
+
+
+
+
+    public function updateAvatar(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        // Process avatar update
+        if ($request->hasFile('avatar')) {
+            $request->validate([
+                'avatar' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
+            $avatar = $request->file('avatar');
+            $path = $avatar->store('avatars', 'public');
+
+            $user->avatar = $path; // Save avatar path to the database
+        }
+
+        // Validate and save changes to name
         $request->validate([
-            'avatar' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => 'required|string|max:255',
         ]);
 
-        $avatar = $request->file('avatar');
-        $path = $avatar->store('avatars', 'public');
+        // Set the new name
+        $newName = $request->input('name');
 
-        $user->avatar = $path; // Simpan path avatar ke dalam basis data
+        // Check if the new name is different
+        if ($user->name !== $newName) {
+            // Validate uniqueness of the new name
+            $request->validate([
+                'name' => 'unique:users,name',
+            ]);
+
+            // Save changes to the name
+            $user->name = $newName; // Set the new name
+        }
+
+        // Validate and save changes to email
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $user->id,
+        ]);
+
+        // Set the new email
+        $newEmail = $request->input('email');
+
+        // Check if the new email is different
+        if ($user->email !== $newEmail) {
+            // Validate uniqueness of the new email
+            $request->validate([
+                'email' => 'unique:users,email',
+            ]);
+
+            // Save changes to the email
+            $user->email = $newEmail; // Set the new email
+        }
+
+        info('Update User Data:', ['name' => $user->name, 'email' => $user->email]); // Log data
+
         $user->save();
 
-        return redirect()->route('lohe')->with('alertMessage', 'Avatar Anda telah diperbarui');
+        return redirect()->route('lohe')->with('alertMessage', 'Profil Anda telah diperbarui');
     }
 
-    return redirect()->route('lohe')->with('alertMessage', 'Tidak ada gambar yang dipilih.');
-}
+
 
 }
