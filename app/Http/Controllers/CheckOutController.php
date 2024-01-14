@@ -105,66 +105,7 @@ public function cekongkoskirim1(Request $request)
     return view('ongkir.index', compact('cities','ongkir'));
 }
 
-public function processCheckout(Request $request)
-{
-    // Your existing code
 
-    // Extract data from the request
-    $cartItems = $request->input('cartItems');
-    $totalPrice = $request->input('totalPrice');
-
-    // Get the user ID (assuming the user is authenticated)
-    $userId = Auth::id();
-
-    // Process the cart items as needed
-    foreach ($cartItems as $cartItemData) {
-        // Logika untuk mendapatkan ID tambahan, contoh: timestamp
-        $additionalId = time();
-
-        // Save data to the database using the CheckOut model
-        CheckOut::create([
-            'id' => $additionalId, // Ganti 'id' dengan nama kolom yang sesuai di tabel CheckOut
-            'user_id' => $userId,
-            'product_id' => $cartItemData['product_id'],
-            'size' => $cartItemData['size'],
-            'quantity' => $cartItemData['quantity'],
-            'harga' => $cartItemData['harga'],
-            'totalPrice' => $totalPrice,
-            // ... tambahkan atribut lainnya
-        ]);
-    }
-
-
-    \Midtrans\Config::$serverKey = config('midtrans.serverKey');
-    \Midtrans\Config::$isProduction = false;
-    \Midtrans\Config::$isSanitized = true;
-    \Midtrans\Config::$is3ds = true;
-
-    $params = [
-        'transaction_details' => [
-            'order_id' => $additionalId,
-            'gross_amount' => $totalPrice,
-        ],
-        'item_details' => [
-            [
-                'id' => $result['product_id'],
-                'price' => $itemPrice, // Replace with the actual price of the item
-                'quantity' => $result['quantity'],
-
-            ],
-            // Add more items if needed
-        ],
-    ];
-
-    // Mendapatkan Snap Token dari Midtrans
-    $snapToken = \Midtrans\Snap::getSnapToken($params);
-
-    Cart::where('user_id', $userId)->delete();
-
-    // ...
-
-    return redirect()->route('invoice',['snapToken' => $snapToken])->with('success', 'Checkout successful!');
-}
 
 public function gantistatus(Request $request)
 {
@@ -184,16 +125,16 @@ public function gantistatus(Request $request)
             $checkout->save();
 
             // Log success
-            \Log::info('Payment status updated to "sudah bayar" successfully for order ID: ' . $orderId);
+            Log::info('Payment status updated to "sudah bayar" successfully for order ID: ' . $orderId);
         } else {
             // Log that the status is already 'sudah bayar'
-            \Log::info('Payment status is already "sudah bayar" for order ID: ' . $orderId);
+            Log::info('Payment status is already "sudah bayar" for order ID: ' . $orderId);
         }
 
         return response()->json(['message' => 'Payment status updated successfully'], 200);
     } catch (\Exception $e) {
         // Log the error
-        \Log::error('Error updating payment status: ' . $e->getMessage());
+        Log::error('Error updating payment status: ' . $e->getMessage());
 
         return response()->json(['message' => 'Error updating payment status'], 500);
     }

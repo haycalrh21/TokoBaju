@@ -58,7 +58,7 @@
             Swal.fire('Sukses', 'Data telah diperbarui', 'success');
             setTimeout(function () {
                 location.reload();
-            }, 10);
+            }, 2000);
         }
 
         // Assuming this is your AJAX error function
@@ -66,16 +66,19 @@
             console.error('Error');
             isLoading = false;
             document.getElementById('loadingOverlay').style.display = 'none';
-            Swal.fire('Error', 'Terjadi kesalahan', 'error');
+            // You can choose not to execute certain actions in case of an error
+            // For example, don't display the error message or reload the page
+            // Swal.fire('Error', 'Terjadi kesalahan', 'error');
         }
 
         // Simulating an AJAX call with setTimeout
         setTimeout(function() {
             if (isLoading) {
-                // If the loading flag is still true, simulate a successful response
-                handleSuccess();
+                // Simulating an error response
+                handleError();
             }
         }, 2000);
     </script>
+
 </body>
 </html>

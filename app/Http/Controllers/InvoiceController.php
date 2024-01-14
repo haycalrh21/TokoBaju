@@ -9,34 +9,25 @@ use Illuminate\Http\Request;
 use Midtrans\Notification;
 class InvoiceController extends Controller
 {
-    public function invoice()
-    {
-        $checkoutItems = CheckOut::with('product')->where('status', 'belum bayar')->get();
+public function invoice()
+{
+    // Retrieve checkout items with product relationships and filter by 'belum bayar'
+    $checkoutItems = CheckOut::with('product')->where('status', 'belum bayar')->get();
 
-        // Jika ada data checkout
-        if ($checkoutItems->isNotEmpty()) {
-            // Ambil total amount dari checkout pertama (misalnya)
-            $totalAmount = $checkoutItems->first()->totalPrice;
+    // If there are items with 'belum bayar' status
+    if ($checkoutItems->isNotEmpty()) {
+        // Group items by cart_id
+        $groupedCheckoutItems = $checkoutItems->groupBy('cart_id');
 
-            // Ambil Snap Token dari objek checkout pertama
-            $snapToken = $checkoutItems->first()->snap_token;
-
-            // Pengelompokkan berdasarkan cart ID
-            $groupedCheckoutItems = $checkoutItems->groupBy('cart_id');
-
-            // Ambil entri unik berdasarkan cart ID
-            $uniqueGroupedCheckoutItems = $groupedCheckoutItems->unique('cart_id');
-
-            return view('product.invoice', [
-                'groupedCheckoutItems' => $uniqueGroupedCheckoutItems,
-                'totalAmount' => $totalAmount,
-                'snapToken' => $snapToken,
-            ]);
-        } else {
-            // Jika tidak ada checkout dengan status 'belum bayar'
-            return view('product.invoice')->with('message', 'Tidak ada pembayaran yang belum dibayar.');
-        }
+        return view('product.invoice', [
+            'groupedCheckoutItems' => $groupedCheckoutItems,
+        ]);
+    } else {
+        // If there are no items with 'belum bayar' status
+        return view('product.invoice')->with('message', 'Tidak ada pembayaran yang belum dibayar.');
     }
+}
+
 
 
 
