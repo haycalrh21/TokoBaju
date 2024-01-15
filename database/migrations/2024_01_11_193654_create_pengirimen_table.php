@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('cart_id');
             $table->string('kota_asal');
+            $table->string('alamat');
             $table->string('kota_tujuan');
             $table->decimal('harga', 10, 2);
             $table->string('service');

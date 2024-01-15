@@ -118,6 +118,7 @@ public function gantistatus(Request $request)
         if (!$checkout) {
             throw new \Exception('Checkout not found for order ID: ' . $orderId);
         }
+        $user = Auth::user();
 
         // Check if the status is not already 'sudah bayar'
         if ($checkout->status !== 'sudah bayar') {
@@ -126,6 +127,7 @@ public function gantistatus(Request $request)
 
             // Log success
             Log::info('Payment status updated to "sudah bayar" successfully for order ID: ' . $orderId);
+            $user->cart->delete();
         } else {
             // Log that the status is already 'sudah bayar'
             Log::info('Payment status is already "sudah bayar" for order ID: ' . $orderId);

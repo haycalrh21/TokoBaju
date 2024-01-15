@@ -43,13 +43,14 @@ class CartController extends Controller
                 'kota_tujuan' => 'required|string',
                 'service' => 'required|string',
                 'estimasi_hari' => 'required|string',
+                'alamat' => 'required|string',
             ]);
-    
+
             $userId = auth()->id();
-    
+
             // Ambil cart_id terakhir yang dimiliki oleh user dengan user_id terakhir
             $cartId = Checkout::where('user_id', $userId)->latest('id')->value('cart_id');
-    
+
             $pengiriman = new Pengiriman([
                 'cart_id' => $cartId,
                 'user_id' => $userId,
@@ -58,34 +59,36 @@ class CartController extends Controller
                 'kota_tujuan' => $request->input('kota_tujuan'),
                 'service' => $request->input('service'),
                 'estimasi_hari' => $request->input('estimasi_hari'),
+                'alamat' => $request->input('alamat'),
+
             ]);
-    
+
             $pengiriman->save();
-    
+
             // Tambahkan logika penjumlahan harga di sini
             $checkOuts = Checkout::where('user_id', $userId)->where('cart_id', $cartId)->get();
-            
+
             foreach ($checkOuts as $checkOut) {
                 $checkOut->totalPrice += $pengiriman->harga;
-    
+
                 \Midtrans\Config::$serverKey = config('midtrans.serverKey');
                 \Midtrans\Config::$isProduction = false;
                 \Midtrans\Config::$isSanitized = true;
                 \Midtrans\Config::$is3ds = true;
-    
+
                 $params = [
                     'transaction_details' => [
                         'order_id' => $cartId, // Menggunakan cart_id sebagai order_id
                         'gross_amount' => $checkOut->totalPrice, // Sesuaikan sesuai kebutuhan
                     ],
                 ];
-    
+
                 // Mendapatkan Snap Token dari Midtrans
                 $snapToken = \Midtrans\Snap::getSnapToken($params);
-    
+
                 // Simpan snap_token ke dalam kolom snap_token
                 $checkOut->snap_token = $snapToken;
-    
+
                 $checkOut->save();
             }
             session()->put('_token', csrf_token());
@@ -95,8 +98,8 @@ class CartController extends Controller
             dd($e->getMessage());
         }
     }
-    
-    
+
+
 
 
 

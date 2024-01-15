@@ -14,6 +14,54 @@
 
     </div>
 </div>
+
+<div class="d-flex flex-wrap mb-4">
+    <!-- Card 1 -->
+    <div class="card shadow mb-4" style="flex-basis: calc(33.333% - 16px); max-width: calc(33.333% - 16px); margin-right: 16px;">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Jumlah Product</h6>
+        </div>
+        <div class="card-body">
+            <p>Jumlah Product: <span id="productCount1">{{ $jumlahProduct }}</span></p>
+        </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card shadow mb-4" style="flex-basis: calc(33.333% - 16px); max-width: calc(33.333% - 16px); margin-right: 16px;">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Jumlah Akun</h6>
+        </div>
+        <div class="card-body">
+            <p>Jumlah Akun: <span id="productCount2">{{ $jumlahAkun }}</span></p>
+        </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card shadow mb-4" style="flex-basis: calc(33.333% - 16px); max-width: calc(33.333% - 16px); margin-right: 16px;">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Jumlah Order</h6>
+        </div>
+        <div class="card-body">
+            <p>Jumlah Order: <span id="productCount3">{{ $jumlahCo }}</span></p>
+        </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card shadow mb-4" style="flex-basis: calc(33.333% - 16px); max-width: calc(33.333% - 16px);">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Jumlah Keranjang</h6>
+        </div>
+        <div class="card-body">
+            <p>Jumlah Keranjang: <span id="productCount4">{{ $jumlahKeranjang }}</span></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
 <!-- Table Card -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">

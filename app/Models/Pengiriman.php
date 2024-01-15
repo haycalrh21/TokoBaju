@@ -13,6 +13,7 @@ class Pengiriman extends Model
 
     protected $fillable = [
         'cart_id',
+        'alamat',
         'user_id',
         'kota_asal',
         'kota_tujuan',
@@ -23,9 +24,9 @@ class Pengiriman extends Model
     ];
 
     // Definisikan relasi dengan check_out jika diperlukan
-    public function checkOut()
+    public function checkout()
     {
-        return $this->belongsTo(CheckOut::class);
+        return $this->hasMany(CheckOut::class);
     }
 
     // Definisikan relasi dengan user jika diperlukan

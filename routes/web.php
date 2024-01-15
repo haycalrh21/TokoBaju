@@ -55,7 +55,7 @@ Route::middleware('auth','role:admin')->group(function(){
     Route::get('admin/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.product.edit');
     Route::put('admin/products/{product}', [ProductController::class, 'update'])->name('admin.product.update');
     Route::delete('admin/products/{product}', [ProductController::class, 'destroy'])->name('admin.product.destroy');
-    Route::get('admin/order/', [OrderController::class, 'indexorder'])->name('tampilorder');
+    Route::get('admin/order/', [AdminController::class, 'order'])->name('tampilorder');
     Route::post('admin/order/check-payment-status/', [OrderController::class, 'updatePaymentStatus'])->name('updatePaymentStatus');
 
 });
@@ -69,9 +69,6 @@ Route::middleware('auth','role:user')->group(function(){
     Route::post('/dashboard', [UserController::class, 'updateAvatar'])->name('lohe');
 
     Route::get('/product/order', [OrderController::class, 'order'])->name('order');
-    // Route::post('/cekongkir', [CartController::class, 'cekongkir'])->name('cekongkir');
-
-    // Route::match(['get', 'post'], '/simpan', [CartController::class, 'simpan'])->name('simpan');
 
     Route::post('/simpan',[CartController::class, 'simpan'])->name('simpandata');
     Route::post('/product/tambah-ke-keranjang/{product}', [OrderController::class, 'tambahKeKeranjang'])->name('tambah.ke.keranjang');
@@ -95,13 +92,10 @@ Route::middleware('auth','role:user')->group(function(){
         Route::post('/cekongkos', [CheckOutController::class, 'cekongkoskirim1'])->name('cekongkoskirim1');
         Route::post('/updatestatus', [CheckOutController::class, 'gantistatus'])->name('gantistatus');
 
-
-
-        // Route::post('/snaptoken', [CheckOutController::class, 'snaptoken'])->name('snaptoken');
         Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('invoice');
         Route::post('/midtrans-callback', [InvoiceController::class, 'callback'])->name('callback');
 
-// routes/web.php
+
 Route::post('/user/product/cancel', [OrderController::class, 'cancel'])->name('cancel');
 
 
