@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\Product;
+use App\Models\User;
 
+use App\Models\Product;
+use App\Models\Checkout;
 use App\Models\CartItems;
 use App\Models\Pengiriman;
-use App\Models\Checkout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -38,7 +40,7 @@ class CartController extends Controller
         try {
             // Validasi data yang diterima dari formulir
             $request->validate([
-                'harga' => 'required|numeric',
+                'hargaongkir' => 'required|numeric',
                 'kota_asal' => 'required|string',
                 'kota_tujuan' => 'required|string',
                 'service' => 'required|string',
@@ -54,7 +56,7 @@ class CartController extends Controller
             $pengiriman = new Pengiriman([
                 'cart_id' => $cartId,
                 'user_id' => $userId,
-                'harga' => $request->input('harga'),
+                'hargaongkir' => $request->input('hargaongkir'),
                 'kota_asal' => $request->input('kota_asal'),
                 'kota_tujuan' => $request->input('kota_tujuan'),
                 'service' => $request->input('service'),
@@ -68,29 +70,85 @@ class CartController extends Controller
             // Tambahkan logika penjumlahan harga di sini
             $checkOuts = Checkout::where('user_id', $userId)->where('cart_id', $cartId)->get();
 
+            $snapToken = null;
             foreach ($checkOuts as $checkOut) {
-                $checkOut->totalPrice += $pengiriman->harga;
+                $checkOut->totalPrice += $pengiriman->hargaongkir;
+                // Fetch user information from the "users" table
+                $user = User::find($checkOut->user_id);
 
-                \Midtrans\Config::$serverKey = config('midtrans.serverKey');
-                \Midtrans\Config::$isProduction = false;
-                \Midtrans\Config::$isSanitized = true;
-                \Midtrans\Config::$is3ds = true;
+                // Fetch product information using the 'product_id' attribute
+                $co = Product::find($checkOut->product_id);
+                $checkOuts = Checkout::where('user_id', $userId)->where('cart_id', $cartId)->get();
 
+                $cartId = $checkOut->cart_id;
+
+                // Fetch pengiriman information
+
+
+                if (!$snapToken) {
+                    \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+                    \Midtrans\Config::$isProduction = false;
+                    \Midtrans\Config::$isSanitized = true;
+                    \Midtrans\Config::$is3ds = true;
+
+                    // $pengiriman = Pengiriman::where('cart_id', $cartId)->value('hargaongkir');
+
+
+
+                    $hargaOngkir = Pengiriman::where('cart_id', $cartId)->first()->hargaongkir;
+
+                    $checkoutItems = Checkout::where('cart_id', $cartId)
+                    ->select('product_id', DB::raw('SUM(quantity) as totalQuantity'), DB::raw('SUM(harga) as totalHarga'))
+                    ->groupBy('product_id')
+                    ->get();
+                    $totalHargaSemuaItem = 0;
                 $params = [
                     'transaction_details' => [
-                        'order_id' => $cartId, // Menggunakan cart_id sebagai order_id
-                        'gross_amount' => $checkOut->totalPrice, // Sesuaikan sesuai kebutuhan
+                        'order_id' => $cartId,
+                        'gross_amount' => $totalHargaSemuaItem,
+                    ],
+
+                    'item_details' => [],
+
+                    'customer_details' => [
+                        'first_name' => $user->name,
+                        'phone'=> $user->nohp,
+                        'email' => $user->email,
                     ],
                 ];
 
-                // Mendapatkan Snap Token dari Midtrans
-                $snapToken = \Midtrans\Snap::getSnapToken($params);
+                foreach ($checkoutItems as $item) {
 
-                // Simpan snap_token ke dalam kolom snap_token
+
+                    $product = Product::find($item->product_id);
+
+                    $params['item_details'][] = [
+
+                        'id' => $item->product_id,
+                        'price' => $item->totalHarga , // Menggunakan totalHarga yang sudah termasuk harga ongkir
+                        'quantity' => $item->totalQuantity,
+                        'name' => $product->namabarang,
+                        'size' => $checkOut->size, // Pastikan ini sesuai dengan kebutuhan Anda
+                        'brand' => $co->brand, // Pastikan ini sesuai dengan kebutuhan Anda
+                    ];
+
+
+                }
+                // Menambahkan harga ongkir ke total harga dari keseluruhan item
+
+
+                    // Get Snap Token only once for the same cart_id
+                    $snapToken = \Midtrans\Snap::getSnapToken($params);
+                }
+
+
+                // Save snap_token to the snap_token column
                 $checkOut->snap_token = $snapToken;
 
                 $checkOut->save();
             }
+
+
             session()->put('_token', csrf_token());
 
             return redirect()->route('invoice');
@@ -137,10 +195,6 @@ public function cekongkir(Request $request){
 
 
 
-public function coba(){
-    return view('product.coba');
-
-}
 
 
 public function addToCart(Request $request, $productId)

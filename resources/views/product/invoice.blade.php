@@ -81,6 +81,7 @@
                     onSuccess: function (result) {
                         alert('Payment successful!');
                         updatePaymentStatus(result.order_id);
+                        window.location.reload(true);
                     },
                     onPending: function (result) {
                         alert('Payment is pending. You will be notified once the payment is processed.');

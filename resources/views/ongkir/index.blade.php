@@ -90,7 +90,7 @@
                                         <input type="hidden" name="kota_asal" value="{{ $ongkir['origin_details']['city_name'] }}">
                                         <input type="hidden" name="kota_tujuan" value="{{ $ongkir['destination_details']['city_name'] }}">
                                         <input type="hidden" name="service" value="{{ $cost['service'] }}">
-                                        <input type="hidden" name="harga" value="{{ $harga['value'] }}">
+                                        <input type="hidden" name="hargaongkir" value="{{ $harga['value'] }}">
                                         <input type="hidden" name="estimasi_hari" value="{{ $harga['etd'] }}">
                                         <input type="text" name="alamat" value="">
 

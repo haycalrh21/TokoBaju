@@ -17,7 +17,7 @@ class Pengiriman extends Model
         'user_id',
         'kota_asal',
         'kota_tujuan',
-        'harga',
+        'hargaongkir',
         'service',
         'estimasi_hari',
 

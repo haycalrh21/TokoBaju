@@ -112,22 +112,33 @@ public function gantistatus(Request $request)
     try {
         $orderId = $request->input('orderId');
 
-        // Update your 'check_outs' table status to 'sudah bayar'
-        $checkout = Checkout::where('cart_id', $orderId)->first();
+        // Find the checkout entries with the same cart_id
+        $checkouts = Checkout::where('cart_id', $orderId)->get();
 
-        if (!$checkout) {
-            throw new \Exception('Checkout not found for order ID: ' . $orderId);
+        if ($checkouts->isEmpty()) {
+            throw new \Exception('No checkout found for order ID: ' . $orderId);
         }
+
         $user = Auth::user();
+        $hasPaidEntry = false;
 
-        // Check if the status is not already 'sudah bayar'
-        if ($checkout->status !== 'sudah bayar') {
-            $checkout->status = 'sudah bayar';
-            $checkout->save();
+        foreach ($checkouts as $checkout) {
+            // Check if any entry has already been paid
+            if ($checkout->status === 'sudah bayar') {
+                $hasPaidEntry = true;
+                break;
+            }
+        }
 
-            // Log success
-            Log::info('Payment status updated to "sudah bayar" successfully for order ID: ' . $orderId);
+        // Update the status for all entries if any of them has not been paid
+        if (!$hasPaidEntry) {
+            foreach ($checkouts as $checkout) {
+                $checkout->status = 'sudah bayar';
+                $checkout->save();
+            }
+
             $user->cart->delete();
+            return view('product.invoice');
         } else {
             // Log that the status is already 'sudah bayar'
             Log::info('Payment status is already "sudah bayar" for order ID: ' . $orderId);
@@ -141,6 +152,9 @@ public function gantistatus(Request $request)
         return response()->json(['message' => 'Error updating payment status'], 500);
     }
 }
+
+
+
 
 
 }
