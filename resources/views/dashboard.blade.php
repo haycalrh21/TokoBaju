@@ -41,14 +41,23 @@
         </div>
         @auth
         <div class="flex flex-col gap-4 border-b py-4 sm:flex-row">
-            <p class="shrink-0 w-32 font-medium">Name</p>
+            <p class="shrink-0 w-32 font-medium">Nama</p>
             <input class="mb-2 w-full rounded-md border bg-white px-2 py-2 outline-none ring-blue-600 sm:mr-4 sm:mb-0 focus:ring-1" id="name" name="name" type="text" value="{{ old('name', Auth::user()->name) }}" />
         </div>
-
 
         <div class="flex flex-col gap-4 border-b py-4 sm:flex-row">
             <p class="shrink-0 w-32 font-medium">Email</p>
             <input class="mb-2 w-full rounded-md border bg-white px-2 py-2 outline-none ring-blue-600 sm:mr-4 sm:mb-0 focus:ring-1" id="email" name="email" type="email" value="{{ old('email', Auth::user()->email) }}" />
+        </div>
+
+        <div class="flex flex-col gap-4 border-b py-4 sm:flex-row">
+            <p class="shrink-0 w-32 font-medium">No Handphone</p>
+            <input class="mb-2 w-full rounded-md border bg-white px-2 py-2 outline-none ring-blue-600 sm:mr-4 sm:mb-0 focus:ring-1" id="nohp" name="nohp" type="text" value="{{ old('nohp', Auth::user()->nohp) }}" />
+        </div>
+
+        <div class="flex flex-col gap-4 border-b py-4 sm:flex-row">
+            <p class="shrink-0 w-32 font-medium">Alamat</p>
+            <input class="mb-2 w-full rounded-md border bg-white px-2 py-2 outline-none ring-blue-600 sm:mr-4 sm:mb-0 focus:ring-1" id="alamat" name="alamat" type="text" value="{{ old('alamat', Auth::user()->alamat) }}" />
         </div>
     @endauth
 
@@ -57,11 +66,6 @@
           <button class="mr-2 rounded-lg border-2 px-4 py-2 font-medium text-gray-500 focus:outline-none focus:ring hover:bg-gray-200">Cancel</button>
           <button class="rounded-lg border-2 border-transparent bg-blue-600 px-4 py-2 font-medium text-white focus:outline-none focus:ring hover:bg-blue-700">Save</button>
         </div>
-
-
-
-
-
 
 
         <button class="mr-2 hidden rounded-lg border-2 px-4 py-2 font-medium text-gray-500 sm:inline focus:outline-none focus:ring hover:bg-gray-200">Cancel</button>

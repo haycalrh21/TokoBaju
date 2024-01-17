@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('kota_asal');
             $table->string('alamat');
             $table->string('kota_tujuan');
-            $table->decimal('harga', 10, 2);
+            $table->decimal('hargaongkir', 10, 2);
             $table->string('service');
             $table->string('estimasi_hari');
             // tambahkan kolom lain sesuai kebutuhan

@@ -84,7 +84,7 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        // Process avatar update
+        // Proses pembaruan avatar
         if ($request->hasFile('avatar')) {
             $request->validate([
                 'avatar' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -93,54 +93,83 @@ class UserController extends Controller
             $avatar = $request->file('avatar');
             $path = $avatar->store('avatars', 'public');
 
-            $user->avatar = $path; // Save avatar path to the database
+            $user->avatar = $path; // Simpan path avatar ke database
         }
 
-        // Validate and save changes to name
+        // Validate dan simpan perubahan nama
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
-        // Set the new name
+        // Set nama baru
         $newName = $request->input('name');
 
-        // Check if the new name is different
+        // Periksa apakah nama baru berbeda
         if ($user->name !== $newName) {
-            // Validate uniqueness of the new name
+            // Validasi keunikan nama baru
             $request->validate([
                 'name' => 'unique:users,name',
             ]);
 
-            // Save changes to the name
-            $user->name = $newName; // Set the new name
+            // Simpan perubahan nama
+            $user->name = $newName; // Set nama baru
         }
 
-        // Validate and save changes to email
+        $request->validate([
+            'alamat' => 'nullable|string|max:255',
+        ]);
+
+        // Set alamat baru
+        $newAddress = $request->input('alamat');
+
+        // Periksa apakah alamat baru berbeda
+        if ($user->alamat !== $newAddress) {
+            $user->alamat = $newAddress; // Set alamat baru
+        }
+
+        // Validate dan simpan perubahan nomor telepon
+        $request->validate([
+            'nohp' => 'nullable|string|max:13',
+        ]);
+
+        // Set nomor telepon baru
+        $newPhoneNumber = $request->input('nohp');
+
+        // Periksa apakah nomor telepon baru berbeda
+        if ($user->nohp !== $newPhoneNumber) {
+            $user->nohp = $newPhoneNumber; // Set nomor telepon baru
+        }
+
+        // Validate dan simpan perubahan email
         $request->validate([
             'email' => 'required|email|unique:users,email,' . $user->id,
         ]);
 
-        // Set the new email
+        // Set email baru
         $newEmail = $request->input('email');
 
-        // Check if the new email is different
+        // Periksa apakah email baru berbeda
         if ($user->email !== $newEmail) {
-            // Validate uniqueness of the new email
+            // Validasi keunikan email baru
             $request->validate([
                 'email' => 'unique:users,email',
             ]);
 
-            // Save changes to the email
-            $user->email = $newEmail; // Set the new email
+            // Simpan perubahan email
+            $user->email = $newEmail; // Set email baru
         }
 
-        info('Update User Data:', ['name' => $user->name, 'email' => $user->email]); // Log data
+        info('Update Data Pengguna:', [
+            'nama'         => $user->name,
+            'email'        => $user->email,
+            'nohp'         => $user->nohp,
+            'alamat'       => $user->alamat,
+        ]); // Catat data
 
         $user->save();
 
         return redirect()->route('lohe')->with('alertMessage', 'Profil Anda telah diperbarui');
     }
-
 
 
 }

@@ -74,7 +74,6 @@ class CartController extends Controller
             foreach ($checkOuts as $checkOut) {
                 $checkOut->totalPrice += $pengiriman->hargaongkir;
                 // Fetch user information from the "users" table
-                $user = User::find($checkOut->user_id);
 
                 // Fetch product information using the 'product_id' attribute
                 $co = Product::find($checkOut->product_id);
@@ -94,14 +93,20 @@ class CartController extends Controller
                     // $pengiriman = Pengiriman::where('cart_id', $cartId)->value('hargaongkir');
 
 
+                    $admin = User::where('role', 'admin')->first();
 
-                    $hargaOngkir = Pengiriman::where('cart_id', $cartId)->first()->hargaongkir;
+                    $user = User::find($checkOut->user_id);
+
+
+                    $pengiriman = Pengiriman::where('cart_id', $cartId)->first();
 
                     $checkoutItems = Checkout::where('cart_id', $cartId)
                     ->select('product_id', DB::raw('SUM(quantity) as totalQuantity'), DB::raw('SUM(harga) as totalHarga'))
                     ->groupBy('product_id')
                     ->get();
                     $totalHargaSemuaItem = 0;
+
+
                 $params = [
                     'transaction_details' => [
                         'order_id' => $cartId,
@@ -112,24 +117,47 @@ class CartController extends Controller
 
                     'customer_details' => [
                         'first_name' => $user->name,
-                        'phone'=> $user->nohp,
+                        'phone' => $user->nohp,
                         'email' => $user->email,
+                        'billing_address' => [
+                            'first_name' => $user->name,
+                            'email' => $user->email,
+                            'phone' => $user->nohp,
+                            'address' => $user->alamat,
+
+                        ],'shipping_address' => [
+                            'first_name' => $admin->name,
+                            'email' => "test@midtrans.com",
+                            'phone' => $admin->nohp,
+                            // 'address' => $pengiriman->kota_asal,
+                            'address' => $admin->alamat,
+                            'city' => "jakarta",
+                            'postal_code'=>"13840",
+
+                        ],
+
                     ],
+
                 ];
 
                 foreach ($checkoutItems as $item) {
 
+                    $pengiriman = Pengiriman::where('cart_id', $cartId)->first();
 
                     $product = Product::find($item->product_id);
+                    $hargaOngkir = Pengiriman::where('user_id', $userId)
+                    ->where('cart_id', $cartId)
+                    ->value('hargaongkir');
 
                     $params['item_details'][] = [
 
                         'id' => $item->product_id,
-                        'price' => $item->totalHarga , // Menggunakan totalHarga yang sudah termasuk harga ongkir
+                        'sub_total'=>($item->totalHarga *$item->totalQuantity)+$pengiriman->hargaongkir,
+                        'price' => ($item->totalHarga)+$pengiriman->hargaongkir , // Menggunakan totalHarga yang sudah termasuk harga ongkir
                         'quantity' => $item->totalQuantity,
                         'name' => $product->namabarang,
                         'size' => $checkOut->size, // Pastikan ini sesuai dengan kebutuhan Anda
-                        'brand' => $co->brand, // Pastikan ini sesuai dengan kebutuhan Anda
+                        'brand' => $product->brand, // Pastikan ini sesuai dengan kebutuhan Anda
                     ];
 
 
