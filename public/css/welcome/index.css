@@ -1,0 +1,5 @@
+.product-image {
+    width: 100%; /* Set the width to fill its container */
+    aspect-ratio: 1 / 1; /* Maintain a 1:1 aspect ratio */
+    object-fit: cover; /* Ensure the image covers the entire area */
+  }

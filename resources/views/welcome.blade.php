@@ -6,17 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     @include('template.navbar')
-    @vite('resources/css/app.css')
+    @vite('public/css/app.css')
+
+
+
 </head>
 
-@include('template.loading')
-<style>
-  .product-image {
-    width: 100%; /* Set the width to fill its container */
-    aspect-ratio: 1 / 1; /* Maintain a 1:1 aspect ratio */
-    object-fit: cover; /* Ensure the image covers the entire area */
-  }
-</style>
 <body>
 
 
@@ -32,7 +27,7 @@
     </div>
   </div>
 
-  <section>
+  <section class="bg-sky-950">
     <b><h1 style="font-size: 50px; text-align: center;">Last Update</h1></b>
     <div class="max-w-screen-xl px-4 py-8 mx-auto sm:py-12 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:items-stretch">
@@ -63,10 +58,13 @@
               <span class="text-1xl font-bold text-gray-900 dark:text-white">Harga: Rp {{ number_format($product['harga'], 0, ',', '.') }}</span>
               {{-- <form action="{{ route('tambahkeranjang') }}" method="post"> --}}
               <a href="{{ route('indexproduct')}}"  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add to cart</a>
+          <a href="{{ route('detailbaju',['id'=> $product->id])}}"  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Detail</a>
+
             {{-- <button type="submit">masukan keranjang</button> --}}
             {{-- </form> --}}
             </div>
           </div>
+
         </div>
       @endforeach
       </div>

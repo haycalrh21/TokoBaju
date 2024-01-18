@@ -1,0 +1,6 @@
+/* Atur gaya untuk logo */
+.logo-img {
+    max-width: 100px; /* Sesuaikan dengan lebar maksimum yang Anda inginkan */
+    max-height: 100px; /* Sesuaikan dengan tinggi maksimum yang Anda inginkan */
+}
+

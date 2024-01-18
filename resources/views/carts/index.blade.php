@@ -4,15 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> --}}
+    <title>Keranjang</title>
+    {{-- <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+    @vite('public/css/app.css') --}}
 
 </head>
-<body>
-    @include('template.navbar')
 
+<style>
+    .flex {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
 
-    <h2>Shopping Cart</h2>
+    .card {
+        min-width: 200px; /* Lebar minimum setiap kartu */
+        margin-right: 10px; /* Jarak antara setiap kartu */
+    }
+
+    /* Atur lebar kartu untuk perangkat mobile */
+    @media (max-width: 576px) {
+        .flex {
+            flex-wrap: wrap; /* Biarkan kartu berada dalam satu baris di perangkat mobile */
+            overflow-x: hidden; /* Hilangkan horizontal scroll */
+        }
+
+        .card {
+            flex: 0 0 calc(100% - 10px); /* Ambil 100% lebar container dan kurangi jarak antara kartu */
+        }
+    }
+</style>
+@include('template.navbar')
+
+<body >
+<section>
+<div class="bg-sky-950 p-4">
+    <h2 class="text-center">Shopping Cart</h2>
+
 
     @if(session('success'))
         <div class="alert alert-success">
@@ -23,30 +51,28 @@
     @if($cartItems->isEmpty())
         <p>Keranjang Anda kosong.</p>
     @else
-        <div class="container">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Produk</th>
-                        <th>Ukuran</th>
-                        <th>Jumlah</th>
-                        <th>harga</th>
 
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($cartItems as $cartItem)
-                        <tr>
-                            <td>{{ $cartItem->product->namabarang }}</td>
-                            <td>{{ $cartItem->size }}</td>
-                            <td>{{ $cartItem->quantity }}</td>
-                            <td>{{ $cartItem->harga }}</td>
+    <div class="flex">
+        @foreach($cartItems as $cartItem)
 
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="card w-96 glass mr-4">
+          <figure><img src="{{ asset('storage/' . $cartItem->product->image) }}" alt="{{ $cartItem->product->namabarang }}" alt="car!"/></figure>
+          <div class="card-body">
+
+            <h2 class="card-title">Nama Product: {{ $cartItem->product->namabarang }}</h2>
+                    <p>Ukuran: {{ $cartItem->size }}</p>
+                    <p>Jumlah: {{ $cartItem->quantity }}</p>
+                    <p>Harga: {{ $cartItem->harga }}</p>
+
+          </div>
         </div>
+        @endforeach
+
+        <!-- Tambahkan card lainnya di sini jika diperlukan -->
+      </div>
+
+
+
         <form action="{{ route('carts.removeFromCart', $cartItem->id) }}" method="post">
             @csrf
             @method('DELETE')
@@ -65,17 +91,8 @@
 
         <p>Total: {{ $cartItems->sum('quantity') }} barang</p>
     @endif
-<!-- Open the modal using ID.showModal() method -->
-<button class="btn" onclick="my_modal_1.showModal()">open modal</button>
-<dialog id="my_modal_1" class="modal">
-  <div class="modal-box">
-    <h3 class="font-bold text-lg">Hello!</h3>
-    <p class="py-4">Press ESC key or click the button below to close</p>
-    <div class="modal-action">
 
-    </div>
-  </div>
-</dialog>
+
 
 
 <form method="post" action="{{ route('cekongkos') }}">
@@ -95,6 +112,10 @@
     <button type="submit" class="btn btn-primary">Submit Checkout</button>
 
 </form>
+
+</div>
+
+</section>
 
 
 
@@ -122,6 +143,7 @@
     }
 </script>
 
+@include('template.footer')
 
 
 </body>

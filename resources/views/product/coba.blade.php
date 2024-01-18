@@ -6,7 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
-<body>
-test
+@include('template.navbar')
+
+<body class="bg-orange-100">
+    test ya
+
 </body>
 </html>

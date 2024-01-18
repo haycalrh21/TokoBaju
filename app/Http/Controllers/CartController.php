@@ -23,6 +23,8 @@ class CartController extends Controller
         // Mengambil user yang sedang login
         $user = Auth::user();
 
+
+        $products = Product::all();
         // Mendapatkan keranjang pengguna (jika ada)
         $cart = $user->cart;
 
@@ -31,7 +33,7 @@ class CartController extends Controller
 
 
 
-        return view('carts.index', compact('cartItems'));
+        return view('carts.index', compact('cartItems','products'));
     }
 
 
@@ -264,7 +266,7 @@ public function addToCart(Request $request, $productId)
     }
 
 
-    return redirect()->route('carts.index',)->with('success', 'Produk berhasil ditambahkan ke dalam keranjang.');
+    return redirect()->back()->with('success', 'Product added to cart successfully.');
 }
 
 

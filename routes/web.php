@@ -32,6 +32,8 @@ use App\Http\Controllers\InvoiceController;
 
 Route::get('/',[HomeController::class, 'index'])->name('index');
 Route::get('/product',[HomeController::class, 'tampilbaju'])->name('indexproduct');
+Route::get('/product/{id}',[HomeController::class, 'detailbaju'])->name('detailbaju');
+Route::get('/coba',[HomeController::class, 'coba'])->name('coba');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
@@ -73,7 +75,7 @@ Route::middleware('auth','role:user')->group(function(){
     Route::post('/simpan',[CartController::class, 'simpan'])->name('simpandata');
     Route::post('/product/tambah-ke-keranjang/{product}', [OrderController::class, 'tambahKeKeranjang'])->name('tambah.ke.keranjang');
 
-    Route::get('/coba', [CartController::class, 'coba'])->name('coba');
+    // Route::get('/coba', [CartController::class, 'coba'])->name('coba');
 
 
     Route::get('/user/riwayat/', [OrderController::class, 'orderan'])->name('orderan');
@@ -96,10 +98,7 @@ Route::middleware('auth','role:user')->group(function(){
         Route::post('/midtrans-callback', [InvoiceController::class, 'callback'])->name('callback');
 
 
-Route::post('/user/product/cancel', [OrderController::class, 'cancel'])->name('cancel');
 
-
-    Route::post('/user/product/order/complete', [OrderController::class, 'bayar'])->name('selesaiorder');
     Route::get('/user/product/order/complete', [OrderController::class, 'showInvoice'])->name('selesai');
 
 

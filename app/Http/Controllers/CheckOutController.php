@@ -138,7 +138,7 @@ public function gantistatus(Request $request)
             }
 
             $user->cart->delete();
-            return view('product.invoice');
+
         } else {
             // Log that the status is already 'sudah bayar'
             Log::info('Payment status is already "sudah bayar" for order ID: ' . $orderId);

@@ -6,9 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     @vite('resources/css/app.css')
-    @include('template.loading')
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
-    {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
+
 
 
 </head>
@@ -124,17 +122,16 @@
 
 </style>
 
+{{-- @vite('public/css/app.css') --}}
 
-<body>
-    <br>
-    <br>
-    <br>
+<body class="bg-sky-950">
 
-    <div class="flex flex-wrap items-center justify-center">
+
+    <div class="flex flex-wrap items-center justify-center mt-4 mb-8">
         @foreach ($products as $product)
             @if ($product->stok > 0)
                 <div class="col-1 col-md-6 col-lg-3 mb-4">
-                    <div class="card">
+                    <div class="card glass">
                         <img src="{{ asset('storage/' . $product->image) }}" alt="Product Image">
                         <h1>{{ $product->namabarang }}</h1>
                         <h1>{{ $product->jenisbarang }}</h1>
@@ -163,6 +160,8 @@
                             <br>
                             <br>
                             <button type="submit" class="btn-add-to-cart">Tambah ke Keranjang</button>
+          <a href="{{ route('detailbaju',['id'=> $product->id])}}"  class="btn-add-to-cart" style="margin-top: 4px">Detail</a>
+
                         </form>
 
                     </div>
@@ -171,15 +170,12 @@
         @endforeach
     </div>
 
-    <div class="flex flex-wrap items-center justify-center">
-       <!-- Tambahkan script berikut di dalam tag <script> di akhir bagian body HTML Anda -->
 
-    </div>
 
 
 </body>
-<footer class="footer footer-center p-4 bg-base-300 text-base-content custom-footer">
-    @include('template.footer')
-</footer>
+dasdasdsa
+@include('template.footer')
+
 
 </html>
