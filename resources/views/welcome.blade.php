@@ -5,27 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    @include('template.navbar')
-    @vite('public/css/app.css')
+    {{-- @vite('public/css/app.css') --}}
 
 
 
 </head>
+@include('template.navbar')
 
 <body>
 
 
-
-<div class="hero min-h-screen" style="background-image: url(https://daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.jpg);">
-    <div class="hero-overlay bg-opacity-10"></div>
-    <div class="hero-content text-center text-neutral-content">
-      <div class="max-w-md">
-        <h1 class="mb-5 text-5xl font-bold">Hai Everyone</h1>
-        <p class="mb-5">Boleh kali diliat dulu bajunya , kalo ga di beli gapapa juga ko :) </p>
-        {{-- <button class="btn btn-primary">Get Started</button> --}}
-      </div>
+<section>
+    <div class="hero min-h-screen relative">
+        <img src="{{ asset('/img/baju.jpg') }}" alt="test" class="w-full h-full object-cover">
+        <div class="hero-overlay bg-opacity-10 absolute top-0 left-0 w-full h-full"></div>
+        <div class="hero-content text-center text-secondary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div class="max-w-md">
+                <h1 class="mb-5 text-5xl font-bold text-white">Hai Everyone</h1>
+                <p class="mb-5 text-white">Boleh kali diliat dulu bajunya, kalo ga dibeli gapapa juga ko :)</p>
+                {{-- <button class="btn btn-primary">Get Started</button> --}}
+            </div>
+        </div>
     </div>
-  </div>
+</section>
 
   <section class="bg-sky-950">
     <b><h1 style="font-size: 50px; text-align: center;">Last Update</h1></b>

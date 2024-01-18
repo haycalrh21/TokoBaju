@@ -26,7 +26,7 @@ class Pengiriman extends Model
     // Definisikan relasi dengan check_out jika diperlukan
     public function checkout()
     {
-        return $this->hasMany(CheckOut::class);
+        return $this->hasMany(CheckOut::class,'user_id');
     }
 
     // Definisikan relasi dengan user jika diperlukan

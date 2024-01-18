@@ -7,13 +7,23 @@
 
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <link rel="stylesheet" href="{{ asset('css/navbar/index.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('css/navbar/index.css') }}"> --}}
 
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+    {{-- <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" /> --}}
 
 
 
 </head>
+
+<style>
+    /* Atur gaya untuk logo */
+.logo-img {
+    max-width: 100px; /* Sesuaikan dengan lebar maksimum yang Anda inginkan */
+    max-height: 100px; /* Sesuaikan dengan tinggi maksimum yang Anda inginkan */
+}
+
+
+</style>
 @include('template.loading')
 <nav>
     <div class="navbar bg-base-300">
@@ -33,13 +43,12 @@
                   <summary class="btn btn-neutral-content normal-case text-md">Hai!  {{ Auth::user()->name }}</summary>
                   @endauth
                   <ul class="p-2">
+
                     @guest
-                    @if (request()->routeIs('login'))
                     <li> <a class="nav-link" href="{{ route('register') }}">Register</a></li>
-                    @else
                     <li> <a class="nav-link" href="{{ route('login') }}">Login</a></li>
-                    @endif
-                    @endguest
+                @endguest
+
                     @auth
                     <li> <a href="{{ route('selesai') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                       Logout
@@ -70,13 +79,10 @@
                 <summary class="btn btn-ghost normal-case text-xl">Hai!  {{ Auth::user()->name }}</summary>
                 @endauth
                 <ul class="p-2">
-                  @guest
-                  @if (request()->routeIs('login'))
-                  <li> <a class="nav-link" href="{{ route('register') }}">Register</a></li>
-                  @else
-                  <li> <a class="nav-link" href="{{ route('login') }}">Login</a></li>
-                  @endif
-                  @endguest
+                    @guest
+                    <li> <a class="nav-link" href="{{ route('register') }}">Register</a></li>
+                    <li> <a class="nav-link" href="{{ route('login') }}">Login</a></li>
+                @endguest
                   @auth
                   <li> <a href="{{ route('selesai') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     Logout

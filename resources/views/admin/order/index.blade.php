@@ -1,6 +1,6 @@
 @extends('admin.template.main')
 @section('contents')
-
+{{-- @include('admin.template.navbar') --}}
 <div class="container">
 
     <h2>List of Orders</h2>
@@ -17,6 +17,7 @@
                     <th>Price</th>
                     <th>Total Price</th>
                     <th>User</th>
+                    <th>Ongkos Kirim</th>
                     <th>Alamat</th>
                     <th>Status pembayaran</th>
                     <th>Aksi</th>
@@ -35,7 +36,22 @@
                         <td>{{ $keranjang->totalPrice }}</td>
 
                         <td>{{ $keranjang->user->name }}</td>
-                        <td>{{ $keranjang->pengiriman->alamat}}</td>
+                        <td>
+                            @if ($keranjang->pengiriman) {{-- Tambahkan pengecekan relasi pengiriman --}}
+                                {{ $keranjang->pengiriman->hargaongkir }}
+                            @else
+                                N/A
+                            @endif
+                        </td>
+                        <td>
+                            @if ($keranjang->pengiriman) {{-- Tambahkan pengecekan relasi pengiriman --}}
+                                {{ $keranjang->pengiriman->alamat }}
+                            @else
+                                N/A
+                            @endif
+                        </td>
+
+
                         <td>{{ $keranjang->created_at }}</td>
                         <td>{{ $keranjang->status }}</td>
 
@@ -48,5 +64,6 @@
         <p>No orders found.</p>
     @endif
 </div>
+
 
 @endsection
