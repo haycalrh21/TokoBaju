@@ -160,7 +160,7 @@
                             <br>
                             <br>
                             <button type="submit" class="btn-add-to-cart">Tambah ke Keranjang</button>
-          <a href="{{ route('detailbaju',['id'=> $product->id])}}"  class="btn-add-to-cart" style="margin-top: 4px">Detail</a>
+                            <a href="{{ route('detailbaju',['id'=> $product->id])}}"  class="btn-add-to-cart" style="margin-top: 4px">Detail</a>
 
                         </form>
 
@@ -174,7 +174,7 @@
 
 
 </body>
-dasdasdsa
+
 @include('template.footer')
 
 

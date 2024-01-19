@@ -11,6 +11,20 @@
 </head>
 
 <style>
+    html, body {
+    height: 100%;
+
+}
+
+
+
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
     .flex {
         display: flex;
         flex-wrap: nowrap;
@@ -36,9 +50,9 @@
 </style>
 @include('template.navbar')
 
-<body >
-<section>
-<div class="bg-sky-950 p-4">
+<body class="bg-sky-950 ">
+
+<div class=""">
     <h2 class="text-center">Shopping Cart</h2>
 
 
@@ -49,7 +63,7 @@
     @endif
 
     @if($cartItems->isEmpty())
-        <p>Keranjang Anda kosong.</p>
+        <p class="text-center">Keranjang Anda kosong.</p>
     @else
 
     <div class="flex">
@@ -106,16 +120,16 @@
             <input type="hidden" name="cartItems[{{ $index }}][harga]" value="{{ $cartItem->harga }}">
             <!-- Include other hidden inputs for other attributes of cart items -->
         @endforeach
+        <button type="submit" class="btn btn-primary">Submit Checkout</button>
     @else
-        <p>Your cart is empty.</p>
+
     @endif
-    <button type="submit" class="btn btn-primary">Submit Checkout</button>
 
 </form>
 
 </div>
 
-</section>
+
 
 
 
@@ -143,8 +157,13 @@
     }
 </script>
 
-@include('template.footer')
 
+
+    <footer class="footer footer-center p-4 bg-base-300 text-base-content">
+        <aside>
+          <p>Copyright © 2023 - All right reserved by Toko Baju XYZ </p>
+        </aside>
+    </footer>
 
 </body>
 </html>

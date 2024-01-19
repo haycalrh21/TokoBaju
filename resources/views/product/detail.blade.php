@@ -6,12 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Detail baju</title>
 </head>
+<style>
+         html, body {
+    height: 100%;
+
+}
+</style>
 @include('template.navbar')
 
-<body>
+<body class="bg-sky-950">
     <!-- resources/views/product/detail.blade.php -->
 
-<div class="text-center">
+<div class="text-center p-6">
     <img class="product-image mx-auto" src="{{ asset('storage/' . $product->image) }}" alt="Product Image">
     <h1>{{ $product->namabarang }} Details</h1>
 
@@ -42,7 +48,7 @@
             @enderror
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3">Add to Cart</button>
+        <button type="submit" class="btn btn-primary mt-3 text-white">Add to Cart</button>
     </form>
 </div>
 

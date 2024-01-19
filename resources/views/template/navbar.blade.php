@@ -36,29 +36,22 @@
               <li><a class="btn btn-neutral-content normal-case text-xl" href="{{ route('indexproduct') }}">Product</a></li>
 
               <li> <a class="btn btn-neutral-content normal-case text-xl" href="{{ route('carts.index') }}">Keranjang</a></li>
-              <li> <a class="btn btn-neutral-content normal-case text-xl" href="{{ route('invoice') }}">riwayat</a></li>
+              <li> <a class="btn btn-neutral-content normal-case text-xl" href="{{ route('invoice') }}">Riwayat</a></li>'
+              @guest
+              <li> <a class="btn btn-neutral-content normal-case text-xl href="{{ route('register') }}">Register</a></li>
+              <li> <a class="btn btn-neutral-content normal-case text-xl" href="{{ route('login') }}">Login</a></li>
+          @endguest
               <li>
 
                   @auth
                   <summary class="btn btn-neutral-content normal-case text-md">Hai!  {{ Auth::user()->name }}</summary>
                   @endauth
                   <ul class="p-2">
+                    <li><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
 
-                    @guest
-                    <li> <a class="nav-link" href="{{ route('register') }}">Register</a></li>
-                    <li> <a class="nav-link" href="{{ route('login') }}">Login</a></li>
-                @endguest
 
-                    @auth
-                    <li> <a href="{{ route('selesai') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                      Logout
-                  </a></li>
-                  <li><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
 
-                    <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">
-                      @csrf
-                  </form>
-                  @endauth
+
                   </ul>
 
               </li>
@@ -71,38 +64,40 @@
             <li><a class="btn btn-ghost normal-case text-xl" href="{{ route('indexproduct') }}">Product</a></li>
 
             <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('carts.index') }}">Keranjang</a></li>
-            <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('invoice') }}">riwayat</a></li>
+            <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('invoice') }}">Riwayat</a></li>
+            @guest
+            <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('register') }}">Register</a></li>
+            <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('login') }}">Login</a></li>
+        @endguest
             <li>
-              <details class="normal-case text-xl mt-2">
-
                 @auth
-                <summary class="btn btn-ghost normal-case text-xl">Hai!  {{ Auth::user()->name }}</summary>
-                @endauth
-                <ul class="p-2">
-                    @guest
-                    <li> <a class="nav-link" href="{{ route('register') }}">Register</a></li>
-                    <li> <a class="nav-link" href="{{ route('login') }}">Login</a></li>
-                @endguest
-                  @auth
-                  <li> <a href="{{ route('selesai') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    Logout
-                </a></li>
-                <li><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
+                {{-- <ul class="p-2"> --}}
 
-                  <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">
-                    @csrf
-                </form>
+                <li><a class="btn btn-ghost normal-case text-xl" href="{{ route('dashboard') }}">Dashboard</a></li>
+            {{-- </ul> --}}
+            <summary class="btn btn-ghost normal-case text-xl">Hai!  {{ Auth::user()->name }} </summary>
+
                 @endauth
-                </ul>
-              </details>
+
+
             </li>
           </ul>
         </div>
+
         <div class="navbar-end">
+            @auth
+            <a href="{{ route('selesai') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-ghost normal-case text-xl">
+                Logout
+            </a>
+            <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">
+                @csrf
+            </form>
+            @endauth
             <a href="{{ route('index') }}" class="logo-link">
                 <img src="{{ asset('/logo.jpg') }}" alt="Logo"  class="logo-img"/>
             </a>
         </div>
+
       </div>
 </nav>
 <body>
