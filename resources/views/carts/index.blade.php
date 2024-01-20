@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Keranjang</title>
-    {{-- <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
-    @vite('public/css/app.css') --}}
+
 
 </head>
 
@@ -39,8 +38,8 @@
     /* Atur lebar kartu untuk perangkat mobile */
     @media (max-width: 576px) {
         .flex {
-            flex-wrap: wrap; /* Biarkan kartu berada dalam satu baris di perangkat mobile */
-            overflow-x: hidden; /* Hilangkan horizontal scroll */
+            flex-wrap: wrap;
+            overflow-x: hidden; /
         }
 
         .card {
@@ -82,7 +81,7 @@
         </div>
         @endforeach
 
-        <!-- Tambahkan card lainnya di sini jika diperlukan -->
+
       </div>
 
 
@@ -158,12 +157,12 @@
 </script>
 
 
-
     <footer class="footer footer-center p-4 bg-base-300 text-base-content">
         <aside>
           <p>Copyright © 2023 - All right reserved by Toko Baju XYZ </p>
         </aside>
     </footer>
+
 
 </body>
 </html>

@@ -6,38 +6,7 @@
 
 
     <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown no-arrow mx-1">
-            <a class="nav-link dropdown-toggle" href="#" id="paymentDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-money-bill-alt"></i>
-                @if($usersWithPayments->count() > 0)
-                    @php
-                        $unhandledPaymentsCount = 0;
-                        foreach($usersWithPayments as $user) {
-                            foreach($user->checkOuts as $checkOut) {
-                                if (!$checkOut->handled) {
-                                    $unhandledPaymentsCount++;
-                                }
-                            }
-                        }
-                    @endphp
-                    @if($unhandledPaymentsCount > 0)
-                        <span class="badge badge-danger badge-counter" id="badgeCounter">{{ $unhandledPaymentsCount }}</span>
-                    @endif
-                @endif
-            </a>
-            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="paymentDropdown">
-                @foreach($usersWithPayments as $user)
-                    @foreach($user->checkOuts as $checkOut)
-                        @if (!$checkOut->handled)
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-check-circle fa-sm fa-fw mr-2 text-gray-400"></i>
-                                {{ $user->name }} telah membayar sebesar {{ $checkOut->totalPrice }}
-                            </a>
-                        @endif
-                    @endforeach
-                @endforeach
-            </div>
-        </li>
+
 
 
 

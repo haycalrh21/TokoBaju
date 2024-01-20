@@ -4,13 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Detail baju</title>
+    <title>Detail baju{{ $product -> namabarang }}</title>
 </head>
 <style>
          html, body {
     height: 100%;
 
 }
+.footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
 </style>
 @include('template.navbar')
 
@@ -59,5 +64,9 @@
 
 </body>
 
-@include('template.footer')
+    <footer class="footer footer-center p-4 bg-base-300 text-base-content">
+        <aside>
+          <p>Copyright © 2023 - All right reserved by Toko Baju XYZ </p>
+        </aside>
+    </footer>
 </html>

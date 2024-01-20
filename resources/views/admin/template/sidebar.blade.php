@@ -25,10 +25,12 @@
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="/profile">
-        <i class="fas fa-fw fa-tachometer-alt"></i>
-        <span>Profile</span></a>
-    </li>
+        <a class="nav-link" href="{{ route('admin.message.index', ['userId' => auth()->user()->id]) }}">
+
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Pesan</span></a>
+      </li>
+
     <li class="nav-item">
         <a class="nav-link" href="{{ route('tampilorder') }}">
           <i class="fas fa-fw fa-tachometer-alt"></i>

@@ -45,9 +45,12 @@
 
                   @auth
                   <summary class="btn btn-neutral-content normal-case text-md">Hai!  {{ Auth::user()->name }}</summary>
+                  <li><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
+                  <li><a class="nav-link" href="{{ route('messages.index') }}">Pesan</a></li>
                   @endauth
                   <ul class="p-2">
-                    <li><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
+
+
 
 
 
@@ -74,7 +77,10 @@
                 {{-- <ul class="p-2"> --}}
 
                 <li><a class="btn btn-ghost normal-case text-xl" href="{{ route('dashboard') }}">Dashboard</a></li>
-            {{-- </ul> --}}
+                <li><a class="nav-link" href="{{ route('messages.index') }}">Pesan</a></li>
+
+
+                    {{-- </ul> --}}
             <summary class="btn btn-ghost normal-case text-xl">Hai!  {{ Auth::user()->name }} </summary>
 
                 @endauth

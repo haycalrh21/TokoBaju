@@ -4,29 +4,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CheckOutController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\InvoiceController;
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-
+use App\Http\Controllers\CheckOutController;
+use App\Http\Controllers\AdminMessageController;
 
 
 
@@ -35,13 +22,11 @@ Route::get('/product',[HomeController::class, 'tampilbaju'])->name('indexproduct
 Route::get('/product/{id}',[HomeController::class, 'detailbaju'])->name('detailbaju');
 Route::get('/coba',[HomeController::class, 'coba'])->name('coba');
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -59,7 +44,8 @@ Route::middleware('auth','role:admin')->group(function(){
     Route::delete('admin/products/{product}', [ProductController::class, 'destroy'])->name('admin.product.destroy');
     Route::get('admin/order/', [AdminController::class, 'order'])->name('tampilorder');
     Route::post('admin/order/check-payment-status/', [OrderController::class, 'updatePaymentStatus'])->name('updatePaymentStatus');
-
+    Route::get('/admin/messages', [AdminMessageController::class, 'showMessages'])->name('admin.message.index');
+    Route::post('/admin/messages/reply/{id}', [AdminMessageController::class, 'replyMessage'])->name('admin.messages.reply');
 });
 
 
@@ -100,6 +86,18 @@ Route::middleware('auth','role:user')->group(function(){
 
 
     Route::get('/user/product/order/complete', [OrderController::class, 'showInvoice'])->name('selesai');
+
+
+
+
+    // Menampilkan pesan
+    Route::get('/messages', [MessageController::class, 'showMessages'])->name('messages.index');
+
+    // Menyimpan pesan baru
+    Route::post('/messages', [MessageController::class, 'storeMessage'])->name('messages.store');
+
+    // Menyimpan balasan
+    Route::post('/messages/{messageId}/reply', [MessageController::class, 'storeReply'])->name('messages.reply');
 
 
 });
