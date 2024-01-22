@@ -61,7 +61,7 @@ Route::middleware('auth','role:user')->group(function(){
     Route::post('/simpan',[CartController::class, 'simpan'])->name('simpandata');
     Route::post('/product/tambah-ke-keranjang/{product}', [OrderController::class, 'tambahKeKeranjang'])->name('tambah.ke.keranjang');
 
-    // Route::get('/coba', [CartController::class, 'coba'])->name('coba');
+
 
 
     Route::get('/user/riwayat/', [OrderController::class, 'orderan'])->name('orderan');

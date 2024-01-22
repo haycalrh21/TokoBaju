@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    @vite('resources/css/app.css')
+    <title>Product</title>
+
 
 
 
@@ -13,11 +13,12 @@
 @include('template.navbar')
 
 <style>
-     .custom-footer {
-  position: relative; /* Atur posisi kembali ke relatif */
 
-  /* Atur properti lainnya sesuai kebutuhan halaman ini */
+html, body {
+    height: 100%;
+    martin-bottom: 50%;
 }
+
 
     .card {
   width: 100%;
@@ -119,15 +120,20 @@
   background-color: #007bff;
   color: #fff;
 }
-
+.footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
 </style>
 
 {{-- @vite('public/css/app.css') --}}
 
-<body class="bg-sky-950">
+<body class="">
 
-
-    <div class="flex flex-wrap items-center justify-center mt-4 mb-8">
+<section class="bg-sky-950">
+dsadas
+    <div class="flex flex-wrap items-center justify-center mt-4 mb-8 ">
         @foreach ($products as $product)
             @if ($product->stok > 0)
                 <div class="col-1 col-md-6 col-lg-3 mb-4">
@@ -171,11 +177,15 @@
     </div>
 
 
+</section>
 
 
 </body>
-
-@include('template.footer')
+<footer class="footer footer-center p-4 bg-base-300 text-base-content">
+    <aside>
+      <p>Copyright © 2023 - All right reserved by Toko Baju XYZ </p>
+    </aside>
+</footer>
 
 
 </html>

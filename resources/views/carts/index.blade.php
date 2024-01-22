@@ -76,7 +76,11 @@
                     <p>Ukuran: {{ $cartItem->size }}</p>
                     <p>Jumlah: {{ $cartItem->quantity }}</p>
                     <p>Harga: {{ $cartItem->harga }}</p>
-
+                    <form action="{{ route('carts.removeFromCart', $cartItem->id) }}" method="post">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Hapus</button>
+                    </form>
           </div>
         </div>
         @endforeach
@@ -86,11 +90,7 @@
 
 
 
-        <form action="{{ route('carts.removeFromCart', $cartItem->id) }}" method="post">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger">Hapus</button>
-        </form>
+
         @php
         $totalPrice = 0;
     @endphp
