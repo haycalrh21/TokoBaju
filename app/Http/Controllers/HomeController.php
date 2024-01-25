@@ -9,21 +9,19 @@ class HomeController extends Controller
 {
     public function index(){
         $products = Product::all();
-        return view('welcome')->with('products', $products);
+        return view('page.user.welcome')->with('products', $products);
     }
 
     public function tampilbaju(){
         $products = Product::all();
-        return view('product/product',compact('products'));
+        return view('page.user.product.index',compact('products'));
     }
 
     public function detailbaju($id){
         $product= Product::with('sizes')->find($id);
 
-        return view('product.detail',compact('product'));
+        return view('page.user.product.detail.index',compact('product'));
     }
 
-    public function coba(){
-        return view('product.coba');
-    }
+
 }

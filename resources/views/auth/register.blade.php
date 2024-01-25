@@ -19,7 +19,7 @@
     }
 </style>
 
-@include('template.navbar')
+@include('page.user.template.navbar')
 
 <body class="bg-sky-950">
 

@@ -17,7 +17,7 @@ class MessageController extends Controller
         // Mendapatkan pesan dan balasan untuk pengguna yang sedang login
         $messages = Message::where('user_id', $user->id)->with('replies')->get();
 
-        return view('message.index', compact('messages'));
+        return view('page.user.message.index', compact('messages'));
 
     }
 

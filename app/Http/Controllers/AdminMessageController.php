@@ -14,7 +14,7 @@ class AdminMessageController extends Controller
     {
         $messages= Message::all();
         // Kirim data pesan ke tampilan
-        return view('admin.message.index', compact('messages'));
+        return view('page.admin.message.index', compact('messages'));
     }
 
     public function replyMessage(Request $request, $id)

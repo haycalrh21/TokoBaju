@@ -13,27 +13,27 @@ class InvoiceController extends Controller
     {
         // Get the currently logged-in user
         $user = auth()->user();
-    
+
         // Retrieve checkout items with product relationships for the logged-in user and filter by 'belum bayar'
         $checkoutItems = CheckOut::with('product')
             ->where('user_id', $user->id)
             ->where('status', 'belum bayar')
             ->get();
-    
+
         // If there are items with 'belum bayar' status
         if ($checkoutItems->isNotEmpty()) {
             // Group items by cart_id
             $groupedCheckoutItems = $checkoutItems->groupBy('cart_id');
-    
-            return view('product.invoice', [
+
+            return view('page.user.pembayaran.index', [
                 'groupedCheckoutItems' => $groupedCheckoutItems,
             ]);
         } else {
             // If there are no items with 'belum bayar' status
-            return view('product.invoice')->with('message', 'Tidak ada pembayaran yang belum dibayar.');
+            return view('page.user.pembayaran.index')->with('message', 'Tidak ada pembayaran yang belum dibayar.');
         }
     }
-    
+
 
 
 

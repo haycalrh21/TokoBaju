@@ -33,44 +33,38 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::middleware('auth','role:admin')->group(function(){
-    Route::get('/admin/dashboard',[AdminController::class, 'dashboard'])->name('admindashboard');
-    Route::get('admin/product/index', [ProductController::class, 'productadmin'])->name('product.index');
-    // Ganti rute "admin.product.index" dengan "admin.product.index"
-    Route::get('admin/products/create', [ProductController::class, 'create'])->name('admin.product.create');
-    Route::post('admin/products', [ProductController::class, 'store'])->name('admin.product.store');
-    Route::get('admin/products/{product}', [ProductController::class, 'show'])->name('admin.product.show');
+    Route::get('admin/dashboard',[AdminController::class, 'dashboard'])->name('admindashboard');
+    Route::get('admin/product/index', [AdminController::class, 'productadmin'])->name('productadmin');
+    Route::get('admin/products/create', [AdminController::class, 'create'])->name('admin.product.create');
+    Route::post('admin/products', [AdminController::class, 'store'])->name('admin.product.store');
+    Route::get('admin/products/{id}', [AdminController::class, 'show'])->name('admin.product.show');
     Route::get('admin/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.product.edit');
     Route::put('admin/products/{product}', [ProductController::class, 'update'])->name('admin.product.update');
-    Route::delete('admin/products/{product}', [ProductController::class, 'destroy'])->name('admin.product.destroy');
+    Route::delete('admin/products/{product}', [AdminController::class, 'destroy'])->name('admin.product.destroy');
     Route::get('admin/order/', [AdminController::class, 'order'])->name('tampilorder');
     Route::post('admin/order/check-payment-status/', [OrderController::class, 'updatePaymentStatus'])->name('updatePaymentStatus');
     Route::get('/admin/messages', [AdminMessageController::class, 'showMessages'])->name('admin.message.index');
     Route::post('/admin/messages/reply/{id}', [AdminMessageController::class, 'replyMessage'])->name('admin.messages.reply');
+
 });
 
 
 Route::middleware('auth','role:user')->group(function(){
 
-    Route::get('/order',[ProductController::class, 'order'])->name('indexorder');
 
-    Route::get('/dashboard',[UserController::class, 'tampildata'])->name('dashboard');
-    Route::post('/dashboard', [UserController::class, 'updateAvatar'])->name('lohe');
 
-    Route::get('/product/order', [OrderController::class, 'order'])->name('order');
-
-    Route::post('/simpan',[CartController::class, 'simpan'])->name('simpandata');
-    Route::post('/product/tambah-ke-keranjang/{product}', [OrderController::class, 'tambahKeKeranjang'])->name('tambah.ke.keranjang');
+        Route::get('/dashboard',[UserController::class, 'tampildata'])->name('dashboard');
+        Route::post('/dashboard', [UserController::class, 'updateAvatar'])->name('lohe');
 
 
 
+        Route::post('/simpan',[CartController::class, 'simpan'])->name('simpandata');
 
-    Route::get('/user/riwayat/', [OrderController::class, 'orderan'])->name('orderan');
+
 
         Route::get('/carts', [CartController::class, 'index'])->name('carts.index');
-           Route::post('/carts/add/{productId}', [CartController::class, 'addToCart'])->name('carts.addToCart');
-
+        Route::post('/carts/add/{productId}', [CartController::class, 'addToCart'])->name('carts.addToCart');
         Route::delete('/carts/remove/{cartItemId}', [CartController::class, 'removeFromCart'])->name('carts.removeFromCart');
-
         Route::post('/checkout', [CheckOutController::class, 'processCheckout'])->name('checkout');
 
 
@@ -81,23 +75,12 @@ Route::middleware('auth','role:user')->group(function(){
         Route::post('/updatestatus', [CheckOutController::class, 'gantistatus'])->name('gantistatus');
 
         Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('invoice');
-        Route::post('/midtrans-callback', [InvoiceController::class, 'callback'])->name('callback');
 
 
 
-    Route::get('/user/product/order/complete', [OrderController::class, 'showInvoice'])->name('selesai');
-
-
-
-
-    // Menampilkan pesan
-    Route::get('/messages', [MessageController::class, 'showMessages'])->name('messages.index');
-
-    // Menyimpan pesan baru
-    Route::post('/messages', [MessageController::class, 'storeMessage'])->name('messages.store');
-
-    // Menyimpan balasan
-    Route::post('/messages/{messageId}/reply', [MessageController::class, 'storeReply'])->name('messages.reply');
+        Route::get('/messages', [MessageController::class, 'showMessages'])->name('messages.index');
+        Route::post('/messages', [MessageController::class, 'storeMessage'])->name('messages.store');
+        Route::post('/messages/{messageId}/reply', [MessageController::class, 'storeReply'])->name('messages.reply');
 
 
 });

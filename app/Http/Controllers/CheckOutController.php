@@ -82,7 +82,7 @@ public function cekongkoskirim(Request $request)
     $cities = $response['rajaongkir']['results'] ;
     $ongkir = $responseCost['rajaongkir'] ;
 
-    return view('ongkir.index', compact('cities','ongkir'));
+    return view('page.user.ongkir.index', compact('cities','ongkir'));
 }
 public function cekongkoskirim1(Request $request)
 {
@@ -102,7 +102,7 @@ public function cekongkoskirim1(Request $request)
     $cities = $response['rajaongkir']['results'] ;
     $ongkir = $responseCost['rajaongkir'] ;
 
-    return view('ongkir.index', compact('cities','ongkir'));
+    return view('page.user.ongkir.index', compact('cities','ongkir'));
 }
 
 

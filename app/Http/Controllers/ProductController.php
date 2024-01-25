@@ -14,14 +14,7 @@ class ProductController extends Controller
      * Display a listing of the resource.
      */
 
-    public function order()
-    {
-        return view('product/order');
-    }
-    public function checkout()
-    {
-        return view('product/checkout');
-    }
+
 
     public function tambahKeKeranjang($product_id)
     {
@@ -51,81 +44,6 @@ class ProductController extends Controller
     }
 
 
-    public function create()
-    {
-
-        $usersWithPayments = User::whereHas('checkOuts', function ($query) {
-            $query->where('status', 'sudah bayar')->with('products');
-        })->with('checkOuts')->get();
-
-        $totalPriceData = [];
-        $processedCombinations = [];
-
-        foreach ($usersWithPayments as $user) {
-            foreach ($user->checkOuts as $checkOut) {
-                // Create a unique identifier based on cart_id and totalPrice
-                $combinationKey = $checkOut->cart_id . '_' . $checkOut->totalPrice;
-
-                // Check if the combination is not already processed
-                if (!isset($processedCombinations[$combinationKey])) {
-                    // Extract the month and year from the created_at timestamp
-                    $monthYear = date('F Y', strtotime($checkOut->created_at));
-
-                    // Accumulate the total for each month
-                    if (!isset($totalPriceData[$monthYear])) {
-                        $totalPriceData[$monthYear] = 0;
-                    }
-
-                    $totalPriceData[$monthYear] += $checkOut->totalPrice;
-
-                    // Mark the combination as processed
-                    $processedCombinations[$combinationKey] = true;
-                }
-            }
-        }
-        return view('admin/product/tambah',compact('usersWithPayments'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'namabarang' => 'required',
-            'jenisbarang' => 'required',
-            'brand' => 'required',
-            'stok' => 'required|integer',
-            'harga' => 'required|numeric',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        $imagePath = null;
-
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('product', 'public');
-        }
-
-        $product = new Product([
-            'namabarang' => $validatedData['namabarang'],
-            'jenisbarang' => $validatedData['jenisbarang'],
-            'brand' => $validatedData['brand'],
-            'stok' => $validatedData['stok'],
-            'harga' => $validatedData['harga'],
-            'image' => $imagePath,
-        ]);
-
-        $product->save();
-
-      // Simpan data ukuran ke dalam tabel product_sizes
-foreach ($request->input('ukuran') as $size) {
-    $product->productSizes()->create(['size' => $size]);
-}
-
-
-        return redirect()->route('product.index')->with('sukses', 'Postingan akan di publish');
-    }
-
 
 
     public function showProducts()
@@ -143,12 +61,9 @@ foreach ($request->input('ukuran') as $size) {
 
     public function show(string $id)
     {
-      // Ambil data produk berdasarkan ID
-      $product = Product::find($id);
-      $products = Product::with('productSizes')->get();
-      return view('product.show', compact('products'));
-      // Tampilkan tampilan 'product.show' dengan data produk yang dipilih
-      return view('product.show', compact('product'));
+
+      $products = Product::with('productSizes')->find($id);
+      return view('admin.product.show.index', compact('products'));
     }
 
     /**
@@ -204,7 +119,7 @@ foreach ($request->input('ukuran') as $size) {
         $product->delete();
 
         // Redirect ke tampilan 'product.index' dengan pesan sukses
-        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+        return redirect()->route('product.index')->with('success', 'Produk berhasil dihapus.');
 
     }
 

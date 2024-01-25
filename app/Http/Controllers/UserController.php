@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $users = User::all();
-        return view('dashboard', ['users' => $users]);
+        return view('page.user.dashboard', ['users' => $users]);
     }
 
     public function edit(Request $request): View

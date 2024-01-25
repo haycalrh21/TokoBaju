@@ -27,6 +27,11 @@ class Product extends Model
         return $this->hasMany(ProductSize::class, 'product_id');
     }
 
+    public function checkout()
+    {
+        return $this->belongsTo(CheckOut::class, 'product_id');
+    }
+
 
 }
 
