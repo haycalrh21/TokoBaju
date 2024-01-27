@@ -77,6 +77,16 @@
                         class="mb-2 w-full rounded-md border bg-white px-2 py-2 outline-none ring-blue-600 sm:mr-4 sm:mb-0 focus:ring-1"
                         id="alamat" name="alamat" type="text" value="{{ old('alamat', Auth::user()->alamat) }}" />
                 </div>
+                <div>
+                    <p class="shrink-0 w-32 font-medium">Option</p>
+                    <select name="" id="">
+                        @foreach ($user as $nama )
+
+                        <option value="{{ $nama->name }}">{{ $nama->name }}</option>
+                        @endforeach
+
+                    </select>
+                </div>
             @endauth
 
 

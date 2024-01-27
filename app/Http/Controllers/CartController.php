@@ -14,13 +14,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Validation\ValidationException;
 
 class CartController extends Controller
 {
     // Menampilkan isi keranjang
     public function index(Request $request)
     {
-        // Mengambil user yang sedang login
+
         $user = Auth::user();
 
 
@@ -75,15 +77,13 @@ class CartController extends Controller
             $snapToken = null;
             foreach ($checkOuts as $checkOut) {
                 $checkOut->totalPrice += $pengiriman->hargaongkir;
-                // Fetch user information from the "users" table
 
-                // Fetch product information using the 'product_id' attribute
                 $co = Product::find($checkOut->product_id);
                 $checkOuts = Checkout::where('user_id', $userId)->where('cart_id', $cartId)->get();
 
                 $cartId = $checkOut->cart_id;
 
-                // Fetch pengiriman information
+
 
 
                 if (!$snapToken) {
@@ -155,11 +155,11 @@ class CartController extends Controller
 
                         'id' => $item->product_id,
                         'sub_total'=>($item->totalHarga *$item->totalQuantity)+$pengiriman->hargaongkir,
-                        'price' => ($item->totalHarga)+$pengiriman->hargaongkir , // Menggunakan totalHarga yang sudah termasuk harga ongkir
+                        'price' => ($item->totalHarga) ,
                         'quantity' => $item->totalQuantity,
                         'name' => $product->namabarang,
-                        'size' => $checkOut->size, // Pastikan ini sesuai dengan kebutuhan Anda
-                        'brand' => $product->brand, // Pastikan ini sesuai dengan kebutuhan Anda
+                        'size' => $checkOut->size,
+                        'brand' => $product->brand,
                     ];
 
 
@@ -195,10 +195,6 @@ class CartController extends Controller
 
 public function cekongkir(Request $request){
 
- // Mengambil user yang sedang login
-
-
- // Mendapatkan keranjang pengguna (jika ada)
 
 
     $response = Http::withHeaders([
@@ -229,44 +225,49 @@ public function cekongkir(Request $request){
 
 public function addToCart(Request $request, $productId)
 {
-    // Validasi request
-    $request->validate([
-        'quantity.' . $productId => 'required|integer|min:1',
-        'ukuran.' . $productId => 'required|exists:product_sizes,size',
+    Try{
+// Validasi request
+$request->validate([
+    'quantity.' . $productId => 'required|integer|min:1',
+    'ukuran.' . $productId => 'required|exists:product_sizes,size',
+]);
+
+// Mengambil user yang sedang login
+$user = Auth::user();
+
+// Mencari atau membuat keranjang untuk user
+$cart = Cart::firstOrCreate(['user_id' => $user->id]);
+
+// Mencari item keranjang yang sesuai dengan produk dan ukuran
+$cartItem = $cart->cartItems()
+    ->where('product_id', $productId)
+    ->where('size', $request->input('ukuran.' . $productId))
+    ->first();
+
+// Mengambil harga dari produk
+$harga = Product::findOrFail($productId)->harga;
+
+// Jika item sudah ada, tambahkan jumlah item dalam keranjang
+if ($cartItem) {
+    $cartItem->quantity += $request->input('quantity.' . $productId);
+    $cartItem->save();
+} else {
+    // Jika item belum ada, buat item baru dalam keranjang
+    $cartItem = new CartItems([
+        'product_id' => $productId,
+        'size' => $request->input('ukuran.' . $productId),
+        'quantity' => $request->input('quantity.' . $productId),
+        'harga' => $harga,
     ]);
+    $cart->cartItems()->save($cartItem);
+}
 
-    // Mengambil user yang sedang login
-    $user = Auth::user();
 
-    // Mencari atau membuat keranjang untuk user
-    $cart = Cart::firstOrCreate(['user_id' => $user->id]);
+return redirect()->back()->with('success', 'Product added to cart successfully.');
+    }catch(\Exception $e){
 
-    // Mencari item keranjang yang sesuai dengan produk dan ukuran
-    $cartItem = $cart->cartItems()
-        ->where('product_id', $productId)
-        ->where('size', $request->input('ukuran.' . $productId))
-        ->first();
-
-    // Mengambil harga dari produk
-    $harga = Product::findOrFail($productId)->harga;
-
-    // Jika item sudah ada, tambahkan jumlah item dalam keranjang
-    if ($cartItem) {
-        $cartItem->quantity += $request->input('quantity.' . $productId);
-        $cartItem->save();
-    } else {
-        // Jika item belum ada, buat item baru dalam keranjang
-        $cartItem = new CartItems([
-            'product_id' => $productId,
-            'size' => $request->input('ukuran.' . $productId),
-            'quantity' => $request->input('quantity.' . $productId),
-            'harga' => $harga,
-        ]);
-        $cart->cartItems()->save($cartItem);
     }
 
-
-    return redirect()->back()->with('success', 'Product added to cart successfully.');
 }
 
 

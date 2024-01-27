@@ -68,6 +68,7 @@
 
             <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('carts.index') }}">Keranjang</a></li>
             <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('invoice') }}">Riwayat</a></li>
+            {{-- <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('test') }}">test</a></li> --}}
             @guest
             <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('register') }}">Register</a></li>
             <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('login') }}">Login</a></li>

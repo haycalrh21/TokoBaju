@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -23,10 +24,12 @@ class UserController extends Controller
 
     public function tampildata()
     {
-        $user = Auth::user();
-        $users = User::all();
-        return view('page.user.dashboard', ['users' => $users]);
+        $user = User::all();
+        $userResource = UserResource::collection($user);
+
+        return view('page.user.dashboard', ['user' => $userResource]);
     }
+
 
     public function edit(Request $request): View
     {
@@ -69,8 +72,12 @@ class UserController extends Controller
 
         return redirect()->route('lohe')->with('alertMessage', 'Profil Anda telah diperbarui');
     }
+    // pemanggilan resource
+    // public function test(){
+    //     $users = User::all();
 
-
+    //     return UserResource::collection($users);
+    // }
 
 
 

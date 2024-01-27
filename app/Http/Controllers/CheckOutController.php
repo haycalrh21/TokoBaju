@@ -34,12 +34,12 @@ class CheckOutController extends Controller
                 // Process the cart items as needed
                 foreach ($cartItems as $cartItemData) {
                     // Logika untuk mendapatkan ID tambahan, contoh: timestamp
-                    $additionalId = time();
+                    $cartId = Cart::first()->id;
+                    $existingCheckout = CheckOut::where('cart_id', $cartId)->first();
 
-                    // Save data to the database using the CheckOut model
                     CheckOut::create([
-                        'id' => $additionalId,
-                        'cart_id' => $additionalId,
+                        'id' => $cartId,
+                        'cart_id' => $cartId,
                         'user_id' => $userId,
                         'product_id' => $cartItemData['product_id'],
                         'size' => $cartItemData['size'],
@@ -51,10 +51,10 @@ class CheckOutController extends Controller
                 }
             }
 
-            // Letakkan dd di sini setelah proses yang di atas sudah berjalan
 
-            // return redirect()->route('cekongkoskirim',compact('cartItems','cities','ongkir'));
-            return redirect()->route('cekongkoskirim');
+            return redirect()->route('cekongkoskirim', ['id' => $cartId]);
+
+
         } catch (\Exception $e) {
             // Tangani exception di sini
             dd("Error: " . $e->getMessage());
@@ -150,6 +150,22 @@ public function gantistatus(Request $request)
         Log::error('Error updating payment status: ' . $e->getMessage());
 
         return response()->json(['message' => 'Error updating payment status'], 500);
+    }
+}
+
+public function hapusco($coId)
+{
+    try {
+        // Pastikan pengguna yang menghapus data adalah pengguna yang sesuai
+        $userId = Auth::id();
+        $checkout = CheckOut::where('id', $coId)->where('user_id', $userId)->firstOrFail();
+
+        // Hapus entri checkout
+        $checkout->delete();
+
+        return response()->json(['message' => 'Data berhasil dihapus'], 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Gagal menghapus data: ' . $e->getMessage()], 500);
     }
 }
 
