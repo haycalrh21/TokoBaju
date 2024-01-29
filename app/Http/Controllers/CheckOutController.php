@@ -28,50 +28,51 @@ class CheckOutController extends Controller
 
             if (!is_null($cartItems)) {
                 foreach ($cartItems as $cartItemData) {
-                    // Periksa apakah kunci 'namabarang' ada dalam $cartItemData
-                    if (array_key_exists('namabarang', $cartItemData)) {
-                        $cartId = Cart::first()->id;
-                        $existingCheckout = CheckOut::where('cart_id', $cartId)->first();
+                    // Get the latest cart for the user
+                    $latestCart = Cart::where('user_id', $userId)->latest()->first();
 
-                        CheckOut::create([
-                            'id' => $cartId,
-                            'cart_id' => $cartId,
-                            'user_id' => $userId,
-                            'product_id' => $cartItemData['product_id'],
-                            'namabarang' => $cartItemData['namabarang'],
-                            'jenisbarang' => $cartItemData['jenisbarang'],
-                            'size' => $cartItemData['size'],
-                            'quantity' => $cartItemData['quantity'],
-                            'harga' => $cartItemData['harga'],
-                            'totalPrice' => $totalPrice,
-                            // ... tambahkan atribut lainnya
-                        ]);
-
-                        Order::create([
-                            'id' => $cartId,
-                            'cart_id' => $cartId,
-                            'user_id'=> $userId,
-                            'product_id' => $cartItemData['product_id'],
-                            'namabarang' => $cartItemData['namabarang'],
-                            'jenisbarang' => $cartItemData['jenisbarang'],
-                            'size' => $cartItemData['size'],
-                            'quantity' => $cartItemData['quantity'],
-                            'harga' => $cartItemData['harga'],
-                            'totalPrice' => $totalPrice,
-                        ]);
-                    } else {
-                        // Kunci 'namabarang' tidak ditemukan dalam $cartItemData
-                        // Tangani kasus ini sesuai kebutuhan Anda
+                    // Create a new cart if none exists
+                    if (!$latestCart) {
+                        $latestCart = Cart::create(['user_id' => $userId]);
                     }
+
+                    // Create Checkout for the current item
+                    CheckOut::create([
+                        'cart_id' => $latestCart->id,
+                        'user_id' => $userId,
+                        'product_id' => $cartItemData['product_id'],
+                        'namabarang' => $cartItemData['namabarang'],
+                        'jenisbarang' => $cartItemData['jenisbarang'],
+                        'size' => $cartItemData['size'],
+                        'quantity' => $cartItemData['quantity'],
+                        'harga' => $cartItemData['harga'],
+                        'totalPrice' => $totalPrice,
+                    ]);
+
+                    // Create Order for the current item
+                    Order::create([
+                        'cart_id' => $latestCart->id,
+                        'user_id' => $userId,
+                        'product_id' => $cartItemData['product_id'],
+                        'namabarang' => $cartItemData['namabarang'],
+                        'jenisbarang' => $cartItemData['jenisbarang'],
+                        'size' => $cartItemData['size'],
+                        'quantity' => $cartItemData['quantity'],
+                        'harga' => $cartItemData['harga'],
+                        'totalPrice' => $totalPrice,
+                    ]);
                 }
             }
 
-            return redirect()->route('cekongkoskirim', ['id' => $cartId]);
-
+            // Redirect to the specified route with the latest cart ID
+            return redirect()->route('cekongkoskirim', ['id' => $latestCart->id]);
         } catch (\Exception $e) {
+            // Handle exceptions here
             dd("Error: " . $e->getMessage());
         }
     }
+
+
 
 
 
@@ -125,62 +126,75 @@ public function gantistatus(Request $request)
     try {
         $orderId = $request->input('orderId');
 
-        // Find the checkout entries with the same cart_id
-        $checkouts = Checkout::where('cart_id', $orderId)->get();
+        // Log untuk memeriksa nilai orderId
+        Log::info('Order ID: ' . $orderId);
+
+        // Temukan entri checkout dengan cart_id yang sama
+        $checkouts = CheckOut::where('cart_id', $orderId)->get();
+
+        // Log untuk memeriksa hasil pencarian checkouts
+        Log::info('Checkouts: ' . $checkouts);
 
         if ($checkouts->isEmpty()) {
             throw new \Exception('No checkout found for order ID: ' . $orderId);
         }
 
-        $user = Auth::user();
-        $hasPaidEntry = false;
+        // Ubah status pada tabel CheckOut
+        $checkouts->each(function ($checkout) {
+            $checkout->update(['status' => 'sudah bayar']);
+        });
 
-        foreach ($checkouts as $checkout) {
-            // Check if any entry has already been paid
-            if ($checkout->status === 'sudah bayar') {
-                $hasPaidEntry = true;
-                break;
-            }
-        }
+        // Ubah status pada tabel Order
+        Order::where('cart_id', $orderId)->update(['status' => 'sudah bayar']);
+        CheckOut::where('cart_id', $orderId)->update(['status' => 'sudah bayar']);
 
-        // Update the status for all entries if any of them has not been paid
-        if (!$hasPaidEntry) {
-            foreach ($checkouts as $checkout) {
-                $checkout->status = 'sudah bayar';
-                $checkout->save();
-            }
-
-            $user->cart->delete();
-
-        } else {
-            // Log that the status is already 'sudah bayar'
-            Log::info('Payment status is already "sudah bayar" for order ID: ' . $orderId);
-        }
+        // Hapus keranjang belanja pengguna setelah pembayaran selesai
+        $user = auth()->user();
+        $user->cart->delete();
 
         return response()->json(['message' => 'Payment status updated successfully'], 200);
     } catch (\Exception $e) {
-        // Log the error
+        // Log kesalahan
         Log::error('Error updating payment status: ' . $e->getMessage());
 
         return response()->json(['message' => 'Error updating payment status'], 500);
     }
 }
 
-public function hapusco($coId)
+
+
+
+
+public function hapusco(Request $request)
 {
     try {
         // Pastikan pengguna yang menghapus data adalah pengguna yang sesuai
         $userId = Auth::id();
-        $checkout = CheckOut::where('id', $coId)->where('user_id', $userId)->firstOrFail();
 
-        // Hapus entri checkout
-        $checkout->delete();
+        // Ambil checkout terbaru untuk pengguna yang terautentikasi
+        $latestCheckout = Checkout::where('user_id', $userId)
+            ->latest('id')
+            ->first();
+        $latestOrder = Order::where('user_id', $userId)
+            ->latest('id')
+            ->first();
+
+        if (!$latestCheckout) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        // Hapus checkout terbaru
+        $latestCheckout->delete();
+        $latestOrder->delete();
 
         return response()->json(['message' => 'Data berhasil dihapus'], 200);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Gagal menghapus data: ' . $e->getMessage()], 500);
     }
 }
+
+
+
 
 
 

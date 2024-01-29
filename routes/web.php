@@ -67,7 +67,8 @@ Route::middleware('auth','role:user')->group(function(){
         Route::get('/cekongkos', [CheckOutController::class, 'cekongkoskirim'])->name('cekongkoskirim');
         Route::post('/cekongkos', [CheckOutController::class, 'cekongkoskirim1'])->name('cekongkoskirim1');
         Route::post('/updatestatus', [CheckOutController::class, 'gantistatus'])->name('gantistatus');
-        // Route::delete('hapusco/{coId}', [CheckOutController::class, 'hapusco'])->name('hapusco');
+        Route::delete('/hapusco', [CheckOutController::class, 'hapusco'])->name('hapusco');
+
 
         Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('invoice');
 

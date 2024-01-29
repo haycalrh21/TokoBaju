@@ -88,7 +88,10 @@
 
         <div class="navbar-end">
             <div class="display :flex;">
+                @auth
                 <p style="margin-right: 10px;">Hai! {{ Auth::user()->name }}</p> <!-- Menempatkan nama pengguna di atas tombol logout -->
+
+                @endauth
                 @auth
                 <a href="" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-ghost normal-case text-xl ml-7">
                     Logout

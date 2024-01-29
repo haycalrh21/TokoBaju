@@ -54,6 +54,15 @@
     </div>
 
 
+    <form action="{{ route('hapusco') }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <button type="submit">Hapus</button>
+    </form>
+
+
+
+
 
 
     <div id="rincianOngkirSection">

@@ -15,28 +15,41 @@ class InvoiceController extends Controller
     {
         // Get the currently logged-in user
         $user = auth()->user();
-        $riwayat = Order::where('user_id',$user->id)->get();
+
+        // Ambil riwayat pesanan (semua pesanan) untuk user saat ini
+        $riwayat = Order::where('user_id', $user->id)->get();
+
         // Retrieve checkout items with product relationships for the logged-in user and filter by 'belum bayar'
         $checkoutItems = CheckOut::with('product')
             ->where('user_id', $user->id)
             ->where('status', 'belum bayar')
             ->get();
 
-        // If there are items with 'belum bayar' status
+        // Jika ada riwayat pesanan
+        if ($riwayat->isNotEmpty()) {
+            // Tampilkan tampilan pembayaran dengan riwayat pesanan
+
+            $groupedCheckoutItems = $checkoutItems->groupBy('cart_id');
+
+            return view('page.user.pembayaran.index', [
+                'riwayat' => $riwayat,
+                'groupedCheckoutItems' => $groupedCheckoutItems,
+            ]);
+        }
+
+        // Jika tidak ada riwayat pesanan, tetapi ada checkout items yang belum dibayar
         if ($checkoutItems->isNotEmpty()) {
             // Group items by cart_id
             $groupedCheckoutItems = $checkoutItems->groupBy('cart_id');
 
             return view('page.user.pembayaran.index', [
-                'groupedCheckoutItems' => $groupedCheckoutItems, 'riwayat'=> $riwayat
-            ]);
-        } else {
-
-            return view('page.user.pembayaran.index', [
-                'riwayat'=> $riwayat,
-                'message' => 'Tidak ada pembayaran yang belum dibayar.'
+                'groupedCheckoutItems' => $groupedCheckoutItems,
+                'riwayat' => $riwayat // Sertakan riwayat pesanan bahkan jika tidak ada riwayat
             ]);
         }
+
+        // Jika tidak ada riwayat pesanan dan tidak ada checkout items yang belum dibayar
+        return view('page.user.pembayaran.index')->with('message', 'Tidak ada pembayaran yang belum dibayar.');
     }
 
 

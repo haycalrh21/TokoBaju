@@ -54,21 +54,28 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($riwayat as $item)
+                @if (!empty($riwayat) && count($riwayat) > 0)
+                    @foreach ($riwayat as $item)
+                        <tr>
+                            <td>{{ $item->namabarang }}</td>
+                            <td>{{ $item->size }}</td>
+                            <td>{{ $item->jenisbarang }}</td>
+                            <td>{{ $item->alamat }}</td>
+                            <td>{{ $item->hargaongkir }}</td>
+                            <td>{{ $item->estimasi_hari }}</td>
+                            <td>{{ $item->quantity }}</td>
+                            <td>{{ $item->harga }}</td>
+                            <td>{{ $item->totalPrice }}</td>
+                            <td>{{ $item->status }}</td>
+                        </tr>
+                    @endforeach
+                @else
                     <tr>
-                        <td>{{ $item->namabarang }}</td>
-                        <td>{{ $item->size }}</td>
-                        <td>{{ $item->jenisbarang }}</td>
-                        <td>{{ $item->alamat }}</td>
-                        <td>{{ $item->hargaongkir }}</td>
-                        <td>{{ $item->estimasi_hari }}</td>
-                        <td>{{ $item->quantity }}</td>
-                        <td>{{ $item->harga }}</td>
-                        <td>{{ $item->totalPrice }}</td>
-                        <td>{{ $item->status }}</td>
+                        <td colspan="10">Tidak ada riwayat pesanan.</td>
                     </tr>
-                @endforeach
+                @endif
             </tbody>
+
 
         </table>
 
