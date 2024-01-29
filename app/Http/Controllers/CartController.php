@@ -5,38 +5,49 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\User;
 
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Checkout;
 use App\Models\CartItems;
 use App\Models\Pengiriman;
 use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
+
 
 class CartController extends Controller
 {
     // Menampilkan isi keranjang
     public function index(Request $request)
     {
+        try {
+            $user = Auth::user();
+            $products = Product::all();
+            $cart = $user->cart;
+            $cartItems = $cart ? $cart->cartItems : collect();
 
-        $user = Auth::user();
+            // Periksa apakah ada data checkout yang ada
+            $existingCheckouts = CheckOut::where('user_id', $user->id)->where('status', 'belum bayar')->get();
 
+            if ($existingCheckouts->isNotEmpty()) {
+                // Jika ada setidaknya satu checkout dengan status "belum bayar"
+                // Redirect ke cekongkoskirim dengan parameter id checkout pertama yang ditemukan
+                return Redirect::route('cekongkoskirim', ['id' => $existingCheckouts->first()->id]);
+            }
 
-        $products = Product::all();
-        // Mendapatkan keranjang pengguna (jika ada)
-        $cart = $user->cart;
+            return view('page.user.carts.index', compact('cartItems', 'products', 'existingCheckouts'));
 
-        // Mendapatkan semua item dalam keranjang
-        $cartItems = $cart ? $cart->cartItems : collect(); // Use a ternary operator to handle a null cart
-
-
-
-        return view('page.user.carts.index', compact('cartItems','products'));
+        } catch (\Exception $e) {
+            // Tangani exception di sini
+            dd("Error: " . $e->getMessage());
+        }
     }
+
 
 
     public function simpan(Request $request)
@@ -49,13 +60,14 @@ class CartController extends Controller
                 'kota_tujuan' => 'required|string',
                 'service' => 'required|string',
                 'estimasi_hari' => 'required|string',
-                'alamat' => 'required|string',
+
             ]);
 
             $userId = auth()->id();
 
             // Ambil cart_id terakhir yang dimiliki oleh user dengan user_id terakhir
-            $cartId = Checkout::where('user_id', $userId)->latest('id')->value('cart_id');
+            $cartId = Checkout::where('user_id', $userId,)->latest('id')->value('cart_id');
+            $alamat = User::where('id',$userId)->latest('id')->value('alamat');
 
             $pengiriman = new Pengiriman([
                 'cart_id' => $cartId,
@@ -65,11 +77,28 @@ class CartController extends Controller
                 'kota_tujuan' => $request->input('kota_tujuan'),
                 'service' => $request->input('service'),
                 'estimasi_hari' => $request->input('estimasi_hari'),
-                'alamat' => $request->input('alamat'),
-
             ]);
 
+            $orderan = Order::find($cartId);
+
+
+            if($orderan){
+                $orderan->update([
+
+                    'cart_id' => $cartId,
+                    'user_id' => $userId,
+                    'alamat'=> $alamat,
+                    'hargaongkir' => $request->input('hargaongkir'),
+                    'kota_asal' => $request->input('kota_asal'),
+                    'kota_tujuan' => $request->input('kota_tujuan'),
+                    'service' => $request->input('service'),
+                    'estimasi_hari' => $request->input('estimasi_hari'),
+                ]);
+            }
+
+
             $pengiriman->save();
+            $orderan->update();
 
             // Tambahkan logika penjumlahan harga di sini
             $checkOuts = Checkout::where('user_id', $userId)->where('cart_id', $cartId)->get();

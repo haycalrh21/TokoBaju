@@ -9,7 +9,7 @@ class CheckOut extends Model
     use HasFactory;
 
     protected $fillable = [
-       'cart_id', 'user_id', 'product_id', 'size', 'quantity', 'harga', 'totalPrice',
+       'cart_id', 'user_id', 'product_id', 'size', 'quantity', 'harga', 'totalPrice','namabarang','jenisbarang'
     ];
 
     public function product()

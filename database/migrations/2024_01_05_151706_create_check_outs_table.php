@@ -17,6 +17,8 @@ return new class extends Migration
 
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('product_id');
+            $table->string('namabarang');
+            $table->string('jenisbarang');
             $table->string('size');
             $table->string('snap_token')->nullable();
             $table->integer('quantity');

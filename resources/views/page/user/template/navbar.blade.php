@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
@@ -49,12 +49,6 @@
                   <li><a class="nav-link" href="{{ route('messages.index') }}">Pesan</a></li>
                   @endauth
                   <ul class="p-2">
-
-
-
-
-
-
                   </ul>
 
               </li>
@@ -66,7 +60,9 @@
           <ul class="menu menu-horizontal px-1">
             <li><a class="btn btn-ghost normal-case text-xl" href="{{ route('indexproduct') }}">Product</a></li>
 
+
             <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('carts.index') }}">Keranjang</a></li>
+
             <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('invoice') }}">Riwayat</a></li>
             {{-- <li> <a class="btn btn-ghost normal-case text-xl" href="{{ route('test') }}">test</a></li> --}}
             @guest
@@ -78,11 +74,10 @@
                 {{-- <ul class="p-2"> --}}
 
                 <li><a class="btn btn-ghost normal-case text-xl" href="{{ route('dashboard') }}">Dashboard</a></li>
-                <li><a class="nav-link" href="{{ route('messages.index') }}">Pesan</a></li>
+                <li><a class="btn btn-ghost normal-case text-xl" href="{{ route('messages.index') }}">Pesan</a></li>
 
 
                     {{-- </ul> --}}
-            <summary class="btn btn-ghost normal-case text-xl">Hai!  {{ Auth::user()->name }} </summary>
 
                 @endauth
 
@@ -92,20 +87,22 @@
         </div>
 
         <div class="navbar-end">
-            @auth
-            <a href="" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-ghost normal-case text-xl">
-                Logout
-            </a>
-            <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">
-                @csrf
-            </form>
-            @endauth
+            <div class="display :flex;">
+                <p style="margin-right: 10px;">Hai! {{ Auth::user()->name }}</p> <!-- Menempatkan nama pengguna di atas tombol logout -->
+                @auth
+                <a href="" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-ghost normal-case text-xl ml-7">
+                    Logout
+                </a>
+                <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">
+                    @csrf
+                </form>
+                @endauth
+            </div>
             <a href="{{ route('index') }}" class="logo-link">
                 <img src="{{ asset('/logo.jpg') }}" alt="Logo"  class="logo-img"/>
             </a>
         </div>
 
-      </div>
 </nav>
 <body>
 

@@ -5,12 +5,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\CheckOut;
 use App\Models\CartItems;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class CheckOutController extends Controller
@@ -21,45 +22,57 @@ class CheckOutController extends Controller
     public function masukcekongkos(Request $request)
     {
         try {
-
-
             $cartItems = $request->input('cartItems');
             $totalPrice = $request->input('totalPrice');
-
-            // Get the user ID (assuming the user is authenticated)
             $userId = Auth::id();
 
-            // Pastikan $cartItems memiliki nilai sebelum melakukan iterasi
             if (!is_null($cartItems)) {
-                // Process the cart items as needed
                 foreach ($cartItems as $cartItemData) {
-                    // Logika untuk mendapatkan ID tambahan, contoh: timestamp
-                    $cartId = Cart::first()->id;
-                    $existingCheckout = CheckOut::where('cart_id', $cartId)->first();
+                    // Periksa apakah kunci 'namabarang' ada dalam $cartItemData
+                    if (array_key_exists('namabarang', $cartItemData)) {
+                        $cartId = Cart::first()->id;
+                        $existingCheckout = CheckOut::where('cart_id', $cartId)->first();
 
-                    CheckOut::create([
-                        'id' => $cartId,
-                        'cart_id' => $cartId,
-                        'user_id' => $userId,
-                        'product_id' => $cartItemData['product_id'],
-                        'size' => $cartItemData['size'],
-                        'quantity' => $cartItemData['quantity'],
-                        'harga' => $cartItemData['harga'],
-                        'totalPrice' => $totalPrice,
-                        // ... tambahkan atribut lainnya
-                    ]);
+                        CheckOut::create([
+                            'id' => $cartId,
+                            'cart_id' => $cartId,
+                            'user_id' => $userId,
+                            'product_id' => $cartItemData['product_id'],
+                            'namabarang' => $cartItemData['namabarang'],
+                            'jenisbarang' => $cartItemData['jenisbarang'],
+                            'size' => $cartItemData['size'],
+                            'quantity' => $cartItemData['quantity'],
+                            'harga' => $cartItemData['harga'],
+                            'totalPrice' => $totalPrice,
+                            // ... tambahkan atribut lainnya
+                        ]);
+
+                        Order::create([
+                            'id' => $cartId,
+                            'cart_id' => $cartId,
+                            'user_id'=> $userId,
+                            'product_id' => $cartItemData['product_id'],
+                            'namabarang' => $cartItemData['namabarang'],
+                            'jenisbarang' => $cartItemData['jenisbarang'],
+                            'size' => $cartItemData['size'],
+                            'quantity' => $cartItemData['quantity'],
+                            'harga' => $cartItemData['harga'],
+                            'totalPrice' => $totalPrice,
+                        ]);
+                    } else {
+                        // Kunci 'namabarang' tidak ditemukan dalam $cartItemData
+                        // Tangani kasus ini sesuai kebutuhan Anda
+                    }
                 }
             }
 
-
             return redirect()->route('cekongkoskirim', ['id' => $cartId]);
 
-
         } catch (\Exception $e) {
-            // Tangani exception di sini
             dd("Error: " . $e->getMessage());
         }
     }
+
 
 
 

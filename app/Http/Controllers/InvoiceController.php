@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\CheckOut;
+
+use Midtrans\Notification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-use Illuminate\Http\Request;
-use Midtrans\Notification;
 class InvoiceController extends Controller
 {
     public function invoice()
     {
         // Get the currently logged-in user
         $user = auth()->user();
-
+        $riwayat = Order::where('user_id',$user->id)->get();
         // Retrieve checkout items with product relationships for the logged-in user and filter by 'belum bayar'
         $checkoutItems = CheckOut::with('product')
             ->where('user_id', $user->id)
@@ -26,11 +28,14 @@ class InvoiceController extends Controller
             $groupedCheckoutItems = $checkoutItems->groupBy('cart_id');
 
             return view('page.user.pembayaran.index', [
-                'groupedCheckoutItems' => $groupedCheckoutItems,
+                'groupedCheckoutItems' => $groupedCheckoutItems, 'riwayat'=> $riwayat
             ]);
         } else {
-            // If there are no items with 'belum bayar' status
-            return view('page.user.pembayaran.index')->with('message', 'Tidak ada pembayaran yang belum dibayar.');
+
+            return view('page.user.pembayaran.index', [
+                'riwayat'=> $riwayat,
+                'message' => 'Tidak ada pembayaran yang belum dibayar.'
+            ]);
         }
     }
 

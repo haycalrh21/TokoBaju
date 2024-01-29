@@ -92,7 +92,7 @@
                                         <input type="hidden" name="service" value="{{ $cost['service'] }}">
                                         <input type="hidden" name="hargaongkir" value="{{ $harga['value'] }}">
                                         <input type="hidden" name="estimasi_hari" value="{{ $harga['etd'] }}">
-                                        <input type="text" name="alamat" value="">
+
 
                                         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Pilih Pengiriman</button>
                                         @csrf

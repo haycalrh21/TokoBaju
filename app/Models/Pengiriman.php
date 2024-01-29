@@ -13,7 +13,7 @@ class Pengiriman extends Model
 
     protected $fillable = [
         'cart_id',
-        'alamat',
+
         'user_id',
         'kota_asal',
         'kota_tujuan',
@@ -33,5 +33,9 @@ class Pengiriman extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function order(){
+        return $this->hasMany(Order::class);
     }
 }

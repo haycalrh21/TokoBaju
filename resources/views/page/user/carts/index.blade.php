@@ -73,6 +73,7 @@
           <div class="card-body">
 
             <h2 class="card-title">Nama Product: {{ $cartItem->product->namabarang }}</h2>
+                    <p>Jenis: {{ $cartItem->product->jenisbarang }}</p>
                     <p>Ukuran: {{ $cartItem->size }}</p>
                     <p>Jumlah: {{ $cartItem->quantity }}</p>
                     <p>Harga: {{ $cartItem->harga }}</p>
@@ -114,6 +115,8 @@
         <input type="hidden" id="totalPriceInput" name="totalPrice" value="{{ $totalPrice }}">
         @foreach($cartItems as $index => $cartItem)
             <input type="hidden" name="cartItems[{{ $index }}][product_id]" value="{{ $cartItem->product->id }}">
+            <input type="hidden" name="cartItems[{{ $index }}][namabarang]" value="{{ $cartItem->product->namabarang }}">
+            <input type="hidden" name="cartItems[{{ $index }}][jenisbarang]" value="{{ $cartItem->product->jenisbarang }}">
             <input type="hidden" name="cartItems[{{ $index }}][size]" value="{{ $cartItem->size }}">
             <input type="hidden" name="cartItems[{{ $index }}][quantity]" value="{{ $cartItem->quantity }}">
             <input type="hidden" name="cartItems[{{ $index }}][harga]" value="{{ $cartItem->harga }}">
@@ -133,7 +136,7 @@
 
 
 
-{{-- <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script> --}}
+
 
 <script type="text/javascript">
 
