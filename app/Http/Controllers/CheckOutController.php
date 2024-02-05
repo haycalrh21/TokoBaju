@@ -29,16 +29,19 @@ class CheckOutController extends Controller
             if (!is_null($cartItems)) {
                 foreach ($cartItems as $cartItemData) {
                     // Get the latest cart for the user
-                    $latestCart = Cart::where('user_id', $userId)->latest()->first();
+                    $tahun = date('Y');
+                    $bulan = date('m');
+                    $tanggal = date('d');
 
-                    // Create a new cart if none exists
-                    if (!$latestCart) {
-                        $latestCart = Cart::create(['user_id' => $userId]);
-                    }
+                    // Generate random number between 1000 and 9999
+                    $randomNumber = rand(1000, 9999);
+
+                    // Combine date and random number
+                    $cartId = $tahun . $bulan . $tanggal . $randomNumber;
 
                     // Create Checkout for the current item
                     CheckOut::create([
-                        'cart_id' => $latestCart->id,
+                        'cart_id' => $cartId,
                         'user_id' => $userId,
                         'product_id' => $cartItemData['product_id'],
                         'namabarang' => $cartItemData['namabarang'],
@@ -51,7 +54,7 @@ class CheckOutController extends Controller
 
                     // Create Order for the current item
                     Order::create([
-                        'cart_id' => $latestCart->id,
+                        'cart_id' => $cartId,
                         'user_id' => $userId,
                         'product_id' => $cartItemData['product_id'],
                         'namabarang' => $cartItemData['namabarang'],
@@ -65,7 +68,7 @@ class CheckOutController extends Controller
             }
 
             // Redirect to the specified route with the latest cart ID
-            return redirect()->route('cekongkoskirim', ['id' => $latestCart->id]);
+            return redirect()->route('cekongkoskirim');
         } catch (\Exception $e) {
             // Handle exceptions here
             dd("Error: " . $e->getMessage());
