@@ -9,7 +9,7 @@
 
 ## Gambar
 
-Anda dapat menampilkan gambar dalam bentuk daftar atau galeri. Berikut adalah contoh menggunakan daftar:
+Anda dapat menampilkan gambar dalam bentuk daftar :
 
 ### Daftar Gambar
 
@@ -20,7 +20,7 @@ Anda dapat menampilkan gambar dalam bentuk daftar atau galeri. Berikut adalah co
 5. ![Masuk Keranjang](public/img/masukkeranjang.png)
 6. ![Ongkir](public/img/ongkir.png)
 7. ![Pembayaran](public/img/pembayaran.png)
-8. ![Sudah Bayar](public/img/sudahbayara.png)
+8. ![Sudah Bayar](public/img/sudahbayar.png)
 
 Atau Anda dapat menggunakan galeri:
 
@@ -31,13 +31,13 @@ Untuk menginstal proyek ini, ikuti langkah-langkah berikut:
 1. Clone repositori ini ke dalam direktori lokal Anda:
 
     ```bash
-    git clone https://github.com/username/nama-repositori.git
+    git clone https://github.com/haycalrh21/tokobajuonline.git
     ```
 
 2. Masuk ke direktori proyek:
 
     ```bash
-    cd nama-repositori
+    cd tokobajuonline
     ```
 
 3. Install dependensi PHP menggunakan Composer:
@@ -58,10 +58,6 @@ Untuk menginstal proyek ini, ikuti langkah-langkah berikut:
 -   php artisan db=seed --class=AdminSeeder
 -   php artisan serve
 -   npm run dev
-
-## Lisensi
-
-Informasi lisensi proyek Anda.
 
 ## Kontak
 
